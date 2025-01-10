@@ -1,5 +1,6 @@
 ```markdown
 # Twitter MCP Server
+[![smithery badge](https://smithery.ai/badge/mcp-twitter-server)](https://smithery.ai/server/mcp-twitter-server)
 
 A Model Context Protocol (MCP) server that allows Large Language Models (LLMs) to interact with Twitter (X). This server provides tools for posting tweets, searching tweets, and replying to tweets.
 
@@ -20,6 +21,15 @@ Before you begin, ensure you have met the following requirements:
 
 ## Installation
 
+### Installing via Smithery
+
+To install Twitter for Claude Desktop automatically via [Smithery](https://smithery.ai/server/mcp-twitter-server):
+
+```bash
+npx -y @smithery/cli install mcp-twitter-server --client claude
+```
+
+### Manual Installation
 1.  **Clone the repository:**
 
     ```bash
