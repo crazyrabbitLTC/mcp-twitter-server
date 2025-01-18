@@ -2,6 +2,8 @@
 
 A Model Context Protocol server implementation for Twitter API integration.
 
+<a href="https://glama.ai/mcp/servers/qlfiuj6xn6"><img width="380" height="200" src="https://glama.ai/mcp/servers/qlfiuj6xn6/badge" alt="Twitter Server MCP server" /></a>
+
 ## Setup
 
 1. Clone the repository
