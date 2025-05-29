@@ -104,11 +104,16 @@ export const handleGetFollowers: TwitterHandler<GetFollowersArgs> = async (
             'user.fields': userFields?.join(',') || 'description,public_metrics'
         });
 
-        if (!followers.data) {
+        if (!followers.data || !Array.isArray(followers.data) || followers.data.length === 0) {
             return createResponse(`No followers found for user: ${username}`);
         }
 
-        return createResponse(`Followers for ${username}: ${JSON.stringify(followers.data, null, 2)}`);
+        const responseData = {
+            followers: followers.data,
+            meta: followers.meta
+        };
+
+        return createResponse(`Followers for ${username}: ${JSON.stringify(responseData, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
             if (error.message.includes('403')) {
@@ -135,11 +140,16 @@ export const handleGetFollowing: TwitterHandler<GetFollowingArgs> = async (
             'user.fields': userFields?.join(',') || 'description,profile_image_url,public_metrics,verified'
         });
 
-        if (!following.data || following.data.length === 0) {
+        if (!following.data || !Array.isArray(following.data) || following.data.length === 0) {
             return createResponse(`User ${username} is not following anyone`);
         }
 
-        return createResponse(`Users followed by ${username}: ${JSON.stringify(following.data, null, 2)}`);
+        const responseData = {
+            following: following.data,
+            meta: following.meta
+        };
+
+        return createResponse(`Users followed by ${username}: ${JSON.stringify(responseData, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
             if (error.message.includes('403')) {

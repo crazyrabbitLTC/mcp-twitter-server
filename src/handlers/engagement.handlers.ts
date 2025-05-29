@@ -95,11 +95,16 @@ export const handleGetRetweets: TwitterHandler<GetRetweetsArgs> = async (
             'user.fields': userFields?.join(',') || 'description,profile_image_url,public_metrics,verified'
         });
 
-        if (!retweets.data || retweets.data.length === 0) {
+        if (!retweets.data || !Array.isArray(retweets.data) || retweets.data.length === 0) {
             return createResponse(`No retweets found for tweet: ${tweetId}`);
         }
 
-        return createResponse(`Users who retweeted: ${JSON.stringify(retweets.data, null, 2)}`);
+        const responseData = {
+            retweetedBy: retweets.data,
+            meta: retweets.meta
+        };
+
+        return createResponse(`Users who retweeted: ${JSON.stringify(responseData, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
             throw new Error(`Failed to get retweets: ${error.message}`);
@@ -118,12 +123,20 @@ export const handleGetLikedTweets: TwitterHandler<GetLikedTweetsArgs> = async (
             'tweet.fields': tweetFields?.join(',') || 'created_at,public_metrics,author_id'
         });
 
-        const tweets = Array.isArray(likedTweets.data) ? likedTweets.data : [];
-        if (tweets.length === 0) {
+        // The paginator returns data nested: { data: [tweets], meta: {...} }
+        const tweetData = likedTweets.data?.data;
+        const metaData = likedTweets.data?.meta || likedTweets.meta;
+
+        if (!tweetData || !Array.isArray(tweetData) || tweetData.length === 0) {
             return createResponse(`No liked tweets found for user: ${userId}`);
         }
 
-        return createResponse(`Liked tweets: ${JSON.stringify(tweets, null, 2)}`);
+        const responseData = {
+            likedTweets: tweetData,
+            meta: metaData
+        };
+
+        return createResponse(`Liked tweets: ${JSON.stringify(responseData, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
             if (error.message.includes('400') && error.message.includes('Invalid Request')) {

@@ -195,18 +195,18 @@ export async function handleGetListMembers(
 
         const members = await client.getListMembers(args.listId, options);
 
-        if (!members.data || members.data.length === 0) {
+        if (!members.data || !Array.isArray(members.data) || members.data.length === 0) {
             return createResponse(`No members found for list ${args.listId}`);
         }
 
-        const memberCount = members.meta.result_count || 0;
+        const memberCount = members.meta?.result_count || members.data.length;
         let responseText = `Found ${memberCount} members in list ${args.listId}:\n\n`;
 
         members.data.forEach((member) => {
             responseText += `- ${member.name} (@${member.username})\n`;
         });
 
-        if (members.meta.total_retrieved === args.maxResults) {
+        if (members.meta?.total_retrieved === args.maxResults) {
             responseText += '\nNote: Maximum requested results reached. There might be more members available.';
         }
 
