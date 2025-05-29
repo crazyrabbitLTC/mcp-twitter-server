@@ -134,16 +134,20 @@ export const handleGetBlockedUsers: TwitterHandler<GetBlockedUsersArgs> = async 
 
         const blockedUsers = await client.v2.userBlockingUsers(myUserId, options);
 
-        if (!blockedUsers.data || !Array.isArray(blockedUsers.data) || blockedUsers.data.length === 0) {
+        // The paginator returns data nested: { data: [users], meta: {...} }
+        const userData = blockedUsers.data?.data;
+        const metaData = blockedUsers.data?.meta || blockedUsers.meta;
+
+        if (!userData || !Array.isArray(userData) || userData.length === 0) {
             return createResponse('No blocked users found.');
         }
 
         const responseData = {
-            blockedUsers: blockedUsers.data,
-            meta: blockedUsers.meta
+            blockedUsers: userData,
+            meta: metaData
         };
 
-        return createResponse(`Retrieved ${blockedUsers.data.length} blocked users: ${JSON.stringify(responseData, null, 2)}`);
+        return createResponse(`Retrieved ${userData.length} blocked users: ${JSON.stringify(responseData, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
             if (error.message.includes('403')) {
@@ -280,16 +284,20 @@ export const handleGetMutedUsers: TwitterHandler<GetMutedUsersArgs> = async (
 
         const mutedUsers = await client.v2.userMutingUsers(myUserId, options);
 
-        if (!mutedUsers.data || !Array.isArray(mutedUsers.data) || mutedUsers.data.length === 0) {
+        // The paginator returns data nested: { data: [users], meta: {...} }
+        const userData = mutedUsers.data?.data;
+        const metaData = mutedUsers.data?.meta || mutedUsers.meta;
+
+        if (!userData || !Array.isArray(userData) || userData.length === 0) {
             return createResponse('No muted users found.');
         }
 
         const responseData = {
-            mutedUsers: mutedUsers.data,
-            meta: mutedUsers.meta
+            mutedUsers: userData,
+            meta: metaData
         };
 
-        return createResponse(`Retrieved ${mutedUsers.data.length} muted users: ${JSON.stringify(responseData, null, 2)}`);
+        return createResponse(`Retrieved ${userData.length} muted users: ${JSON.stringify(responseData, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
             if (error.message.includes('403')) {
@@ -301,4 +309,4 @@ export const handleGetMutedUsers: TwitterHandler<GetMutedUsersArgs> = async (
         }
         throw error;
     }
-}; 
+};
