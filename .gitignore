@@ -37,4 +37,13 @@ dev-debug.log
 # OS specific
 # Task files
 tasks.json
-tasks/ 
+tasks/
+
+# Development tools and configs
+*repomix*
+.claude/
+.cursor/
+.roo/
+.roomodes/
+.taskmasterconfig
+.windsurfrules 
