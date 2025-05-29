@@ -111,4 +111,37 @@ export interface CreateMediaMessageArgs {
     altText?: string;
 }
 
+// User Moderation related interfaces
+export interface BlockUserArgs {
+    userId?: string;
+    username?: string;
+}
+
+export interface UnblockUserArgs {
+    userId?: string;
+    username?: string;
+}
+
+export interface GetBlockedUsersArgs {
+    maxResults?: number;
+    paginationToken?: string;
+    userFields?: string[];
+}
+
+export interface MuteUserArgs {
+    userId?: string;
+    username?: string;
+}
+
+export interface UnmuteUserArgs {
+    userId?: string;
+    username?: string;
+}
+
+export interface GetMutedUsersArgs {
+    maxResults?: number;
+    paginationToken?: string;
+    userFields?: string[];
+}
+
 export type TwitterHandler<T> = (client: TwitterClient, args: T) => Promise<HandlerResponse>; 

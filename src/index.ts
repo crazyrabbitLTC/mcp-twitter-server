@@ -55,6 +55,14 @@ import {
     handleMarkAsRead,
     handleCreateMediaMessage
 } from './handlers/directmessage.handlers.js';
+import {
+    handleBlockUser,
+    handleUnblockUser,
+    handleGetBlockedUsers,
+    handleMuteUser,
+    handleUnmuteUser,
+    handleGetMutedUsers
+} from './handlers/moderation.handlers.js';
 import { GetUserTimelineArgs } from './types/handlers.js';
 
 // Load environment variables
@@ -322,6 +330,44 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                     altText?: string;
                 };
                 response = await handleCreateMediaMessage(client, { recipientId, text, mediaId, mediaType, altText });
+                break;
+            }
+            case 'blockUser': {
+                const { userId, username } = request.params.arguments as { userId?: string; username?: string };
+                response = await handleBlockUser(client, { userId, username });
+                break;
+            }
+            case 'unblockUser': {
+                const { userId, username } = request.params.arguments as { userId?: string; username?: string };
+                response = await handleUnblockUser(client, { userId, username });
+                break;
+            }
+            case 'getBlockedUsers': {
+                const { maxResults, paginationToken, userFields } = request.params.arguments as { 
+                    maxResults?: number; 
+                    paginationToken?: string; 
+                    userFields?: string[] 
+                };
+                response = await handleGetBlockedUsers(client, { maxResults, paginationToken, userFields });
+                break;
+            }
+            case 'muteUser': {
+                const { userId, username } = request.params.arguments as { userId?: string; username?: string };
+                response = await handleMuteUser(client, { userId, username });
+                break;
+            }
+            case 'unmuteUser': {
+                const { userId, username } = request.params.arguments as { userId?: string; username?: string };
+                response = await handleUnmuteUser(client, { userId, username });
+                break;
+            }
+            case 'getMutedUsers': {
+                const { maxResults, paginationToken, userFields } = request.params.arguments as { 
+                    maxResults?: number; 
+                    paginationToken?: string; 
+                    userFields?: string[] 
+                };
+                response = await handleGetMutedUsers(client, { maxResults, paginationToken, userFields });
                 break;
             }
             default:

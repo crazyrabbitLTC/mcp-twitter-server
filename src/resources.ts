@@ -37,6 +37,11 @@ export const RESOURCES: Resource[] = [
         name: 'User Profile Data',
         description: 'Dynamic user profile information and recent activity',
         mimeType: 'application/json'
+    },
+    {
+        uri: 'twitter://help',
+        name: 'Twitter MCP Server Help',
+        description: 'Documentation for Twitter MCP Server tools and usage'
     }
 ];
 
@@ -83,6 +88,23 @@ export async function handleResource(uri: string, client?: TwitterClient): Promi
                     type: 'text',
                     text: JSON.stringify(getCommonWorkflowTemplates(), null, 2)
                 }]
+            };
+            
+        case '/help':
+            return {
+                contents: [
+                    {
+                        type: 'text',
+                        text: 'Twitter MCP Server provides comprehensive Twitter API integration including:\n\n' +
+                              '- Tweet management (post, reply, delete)\n' +
+                              '- Direct Messages (send, receive, manage)\n' +
+                              '- User moderation (block, mute, unblock, unmute)\n' +
+                              '- User interactions (follow, unfollow, get followers)\n' +
+                              '- Content engagement (like, retweet, get analytics)\n' +
+                              '- List management and search functionality\n\n' +
+                              'Use tools/list to see all available tools.'
+                    }
+                ]
             };
             
         default:

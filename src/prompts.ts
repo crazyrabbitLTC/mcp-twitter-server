@@ -80,6 +80,10 @@ export const PROMPTS: Record<string, Prompt> = {
                 required: false
             }
         ]
+    },
+    'twitter-help': {
+        name: 'twitter-help',
+        description: 'Get help with Twitter MCP server tools and usage'
     }
 };
 
@@ -99,6 +103,9 @@ export const getPromptContent = (promptName: string, args: Record<string, any>):
         
         case 'hashtag-research':
             return generateHashtagResearchPrompt(args.industry, args.campaign_type || 'general');
+        
+        case 'twitter-help':
+            return 'This Twitter MCP server provides tools for interacting with Twitter API including posting tweets, managing direct messages, user moderation (blocking/muting), and more. Use the tools/list method to see all available tools.';
         
         default:
             throw new Error(`Unknown prompt: ${promptName}`);

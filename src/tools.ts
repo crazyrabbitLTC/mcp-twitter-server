@@ -609,5 +609,128 @@ export const TOOLS = {
             },
             required: ['recipientId', 'text', 'mediaId']
         }
+    },
+    // User Moderation Tools
+    blockUser: {
+        description: 'Block a user account to prevent them from following you or viewing your tweets',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                userId: { 
+                    type: 'string', 
+                    description: 'The ID of the user to block' 
+                },
+                username: { 
+                    type: 'string', 
+                    description: 'The username of the user to block (alternative to userId)' 
+                }
+            },
+            required: []
+        }
+    },
+    unblockUser: {
+        description: 'Unblock a previously blocked user account',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                userId: { 
+                    type: 'string', 
+                    description: 'The ID of the user to unblock' 
+                },
+                username: { 
+                    type: 'string', 
+                    description: 'The username of the user to unblock (alternative to userId)' 
+                }
+            },
+            required: []
+        }
+    },
+    getBlockedUsers: {
+        description: 'Retrieve a paginated list of users you have blocked',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                maxResults: { 
+                    type: 'number', 
+                    description: 'Maximum number of blocked users to return (default: 100, max: 1000)',
+                    minimum: 1,
+                    maximum: 1000
+                },
+                paginationToken: { 
+                    type: 'string', 
+                    description: 'Pagination token for retrieving next page of results' 
+                },
+                userFields: { 
+                    type: 'array', 
+                    items: { 
+                        type: 'string',
+                        enum: ['id', 'name', 'username', 'description', 'profile_image_url', 'public_metrics', 'verified', 'location', 'url']
+                    },
+                    description: 'User fields to include in the response' 
+                }
+            },
+            required: []
+        }
+    },
+    muteUser: {
+        description: 'Mute a user account to stop seeing their tweets in your timeline',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                userId: { 
+                    type: 'string', 
+                    description: 'The ID of the user to mute' 
+                },
+                username: { 
+                    type: 'string', 
+                    description: 'The username of the user to mute (alternative to userId)' 
+                }
+            },
+            required: []
+        }
+    },
+    unmuteUser: {
+        description: 'Unmute a previously muted user account',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                userId: { 
+                    type: 'string', 
+                    description: 'The ID of the user to unmute' 
+                },
+                username: { 
+                    type: 'string', 
+                    description: 'The username of the user to unmute (alternative to userId)' 
+                }
+            },
+            required: []
+        }
+    },
+    getMutedUsers: {
+        description: 'Retrieve a paginated list of users you have muted',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                maxResults: { 
+                    type: 'number', 
+                    description: 'Maximum number of muted users to return (default: 100, max: 1000)',
+                    minimum: 1,
+                    maximum: 1000
+                },
+                paginationToken: { 
+                    type: 'string', 
+                    description: 'Pagination token for retrieving next page of results' 
+                },
+                userFields: { 
+                    type: 'array', 
+                    items: { 
+                        type: 'string',
+                        enum: ['id', 'name', 'username', 'description', 'profile_image_url', 'public_metrics', 'verified', 'location', 'url']
+                    },
+                    description: 'User fields to include in the response' 
+                }
+            },
+            required: []
+        }
     }
 }; 
