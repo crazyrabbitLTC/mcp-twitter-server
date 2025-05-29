@@ -33,6 +33,24 @@ export const RESOURCES: Resource[] = [
         mimeType: 'application/json'
     },
     {
+        uri: 'twitter://trends/current',
+        name: 'Current Trending Topics',
+        description: 'Current trending topics and hashtags with engagement insights',
+        mimeType: 'application/json'
+    },
+    {
+        uri: 'twitter://templates/thread-starters',
+        name: 'Thread Opening Templates',
+        description: 'Pre-built templates for starting engaging Twitter threads',
+        mimeType: 'application/json'
+    },
+    {
+        uri: 'twitter://compliance/guidelines',
+        name: 'Twitter Policy & Compliance Guidelines',
+        description: 'Twitter platform rules, policies, and compliance information',
+        mimeType: 'text/markdown'
+    },
+    {
         uri: 'twitter://user/{username}',
         name: 'User Profile Data',
         description: 'Dynamic user profile information and recent activity',
@@ -87,6 +105,30 @@ export async function handleResource(uri: string, client?: TwitterClient): Promi
                 contents: [{
                     type: 'text',
                     text: JSON.stringify(getCommonWorkflowTemplates(), null, 2)
+                }]
+            };
+            
+        case '/trends/current':
+            return {
+                contents: [{
+                    type: 'text',
+                    text: JSON.stringify(getCurrentTrends(), null, 2)
+                }]
+            };
+            
+        case '/templates/thread-starters':
+            return {
+                contents: [{
+                    type: 'text',
+                    text: JSON.stringify(getThreadStarterTemplates(), null, 2)
+                }]
+            };
+            
+        case '/compliance/guidelines':
+            return {
+                contents: [{
+                    type: 'text',
+                    text: getComplianceGuidelines()
                 }]
             };
             
@@ -574,4 +616,336 @@ function getCommonWorkflowTemplates() {
             ]
         }
     };
-} 
+}
+
+function getCurrentTrends() {
+    // Since the Basic tier doesn't have access to trending topics API, 
+    // we provide a curated list of commonly trending categories
+    return {
+        "note": "Live trending data requires Pro tier access. This resource provides common trending categories and hashtag research guidance.",
+        "access_level": "Basic tier - Limited trending data",
+        "trending_categories": [
+            {
+                "category": "Technology",
+                "sample_hashtags": ["#AI", "#MachineLearning", "#Blockchain", "#Web3", "#OpenSource"],
+                "typical_volume": "High",
+                "best_times": ["9-11 AM EST", "2-4 PM EST"]
+            },
+            {
+                "category": "Business",
+                "sample_hashtags": ["#Startup", "#Entrepreneurship", "#Marketing", "#Growth", "#Leadership"],
+                "typical_volume": "Medium-High",
+                "best_times": ["8-10 AM EST", "1-3 PM EST"]
+            },
+            {
+                "category": "Social Impact",
+                "sample_hashtags": ["#ClimateChange", "#Sustainability", "#SocialGood", "#Inclusion", "#Education"],
+                "typical_volume": "Medium",
+                "best_times": ["10 AM-12 PM EST", "7-9 PM EST"]
+            },
+            {
+                "category": "Industry News",
+                "sample_hashtags": ["#TechNews", "#Breaking", "#Innovation", "#Industry", "#Update"],
+                "typical_volume": "Variable",
+                "best_times": ["Morning hours", "End of business day"]
+            }
+        ],
+        "research_suggestions": [
+            "Use searchTweets tool (requires Pro tier) for real-time trending analysis",
+            "Monitor competitor accounts for trending topic participation",
+            "Track hashtag performance using getUserTimeline on influential accounts",
+            "Set up Twitter Lists for different trend categories"
+        ],
+        "pro_tier_benefits": {
+            "real_time_trends": "Access to live trending topics API",
+            "hashtag_analytics": "Volume and engagement metrics for specific hashtags",
+            "trend_history": "Historical trending data and patterns",
+            "geographic_trends": "Location-based trending topics"
+        },
+        "last_updated": new Date().toISOString()
+    };
+}
+
+function getThreadStarterTemplates() {
+    return {
+        "thread_templates": [
+            {
+                "name": "Educational Thread",
+                "category": "Knowledge Sharing",
+                "starter": "🧵 THREAD: Everything you need to know about {topic}",
+                "structure": [
+                    "1/ Start with a compelling hook and promise",
+                    "2/ Present the problem or knowledge gap",
+                    "3/ Break down key concepts (one per tweet)",
+                    "4/ Include examples or case studies",
+                    "5/ Provide actionable takeaways",
+                    "6/ End with a call-to-action or question"
+                ],
+                "tips": [
+                    "Use numbering (1/, 2/, 3/) for clarity",
+                    "Keep each tweet focused on one point",
+                    "Include visuals when possible",
+                    "Ask for engagement in the final tweet"
+                ]
+            },
+            {
+                "name": "Story Thread",
+                "category": "Narrative",
+                "starter": "📖 Thread: The story of how {event/experience}",
+                "structure": [
+                    "1/ Set the scene with context",
+                    "2/ Introduce the challenge or conflict",
+                    "3/ Describe the journey/process",
+                    "4/ Share the turning point",
+                    "5/ Reveal the outcome",
+                    "6/ Extract lessons learned"
+                ],
+                "tips": [
+                    "Use storytelling techniques (tension, resolution)",
+                    "Be vulnerable and authentic",
+                    "Include specific details and emotions",
+                    "Connect story to broader insights"
+                ]
+            },
+            {
+                "name": "Tutorial Thread",
+                "category": "How-To",
+                "starter": "🛠️ Step-by-step guide: How to {achieve specific outcome}",
+                "structure": [
+                    "1/ Promise specific value and outcome",
+                    "2/ List required tools/prerequisites",
+                    "3/ Step-by-step instructions (one per tweet)",
+                    "4/ Common mistakes to avoid",
+                    "5/ Pro tips and optimizations",
+                    "6/ Encourage others to try and share results"
+                ],
+                "tips": [
+                    "Be specific and actionable",
+                    "Include screenshots or examples",
+                    "Test instructions before sharing",
+                    "Offer help in the comments"
+                ]
+            },
+            {
+                "name": "Debate/Opinion Thread",
+                "category": "Thought Leadership",
+                "starter": "🔥 Controversial take: {your contrarian viewpoint}",
+                "structure": [
+                    "1/ State your position clearly",
+                    "2/ Acknowledge the common view",
+                    "3/ Present your evidence/reasoning",
+                    "4/ Address counterarguments",
+                    "5/ Provide supporting examples",
+                    "6/ Invite thoughtful discussion"
+                ],
+                "tips": [
+                    "Be respectful but firm in your stance",
+                    "Use data and examples to support claims",
+                    "Acknowledge valid counterpoints",
+                    "Moderate the discussion constructively"
+                ]
+            },
+            {
+                "name": "List Thread",
+                "category": "Curation",
+                "starter": "📝 {Number} {type of items} that will {benefit/outcome}",
+                "structure": [
+                    "1/ Promise value and set expectations",
+                    "2/ Introduce criteria for selection",
+                    "3/ Present each item with brief explanation",
+                    "4/ Include why each item is valuable",
+                    "5/ Bonus items or honorable mentions",
+                    "6/ Ask followers for their additions"
+                ],
+                "tips": [
+                    "Use consistent formatting for each item",
+                    "Provide context for why items are included",
+                    "Mix well-known and lesser-known options",
+                    "Encourage community contributions"
+                ]
+            },
+            {
+                "name": "Behind-the-Scenes Thread",
+                "category": "Transparency",
+                "starter": "👀 Behind the scenes: What it really takes to {achievement}",
+                "structure": [
+                    "1/ Set up the achievement or project",
+                    "2/ Share the unsexy/difficult parts",
+                    "3/ Highlight key decisions and trade-offs",
+                    "4/ Discuss failures and pivots",
+                    "5/ Credit team members and supporters",
+                    "6/ Offer insights for others attempting similar"
+                ],
+                "tips": [
+                    "Be honest about challenges and failures",
+                    "Share specific numbers or metrics",
+                    "Give credit where it's due",
+                    "Provide actionable insights for others"
+                ]
+            }
+        ],
+        "engagement_tactics": [
+            "Use emojis strategically to break up text",
+            "Ask questions to encourage replies",
+            "Include relevant hashtags (1-2 per thread)",
+            "Reply to your own thread with additional context",
+            "Pin important threads to your profile",
+            "Cross-promote threads in other content"
+        ],
+        "formatting_tips": [
+            "Use line breaks for readability",
+            "Bold key points with **text**",
+            "Create visual hierarchy with numbering",
+            "Include relevant mentions when appropriate",
+            "End strong with a clear call-to-action"
+        ],
+        "last_updated": new Date().toISOString()
+    };
+}
+
+function getComplianceGuidelines(): string {
+    return `# Twitter Policy & Compliance Guidelines
+
+## 🚨 Critical Platform Rules
+
+### Prohibited Content:
+- **Harassment & Abuse**: Threatening, abusive, or hateful conduct
+- **Violence**: Threats, glorification, or incitement of violence
+- **Terrorism**: Support for terrorist organizations or activities
+- **Misinformation**: False or misleading information causing harm
+- **Spam**: Repetitive, unsolicited, or manipulative content
+- **Impersonation**: Pretending to be someone else without authorization
+
+### Restricted Behaviors:
+- **Artificial Engagement**: Buying followers, likes, or retweets
+- **Platform Manipulation**: Coordinated inauthentic behavior
+- **Private Information**: Sharing private info without consent
+- **Non-consensual Media**: Intimate images shared without permission
+- **Copyright Infringement**: Using copyrighted material without permission
+
+## 🤖 API-Specific Compliance
+
+### Rate Limits & Usage:
+- **Respect Rate Limits**: Don't exceed API rate limits
+- **Bulk Operations**: Avoid mass following/unfollowing
+- **Authentic Engagement**: Don't automate personal interactions
+- **Data Usage**: Follow data usage policies and retention limits
+
+### Bot Account Requirements:
+- **Disclosure**: Clearly identify automated accounts
+- **Purpose**: Provide clear description of bot functionality
+- **User Control**: Allow users to block/unfollow easily
+- **Transparency**: Be open about automation level
+
+## 📊 Content Guidelines
+
+### Best Practices:
+- **Original Content**: Share original thoughts and content
+- **Attribution**: Credit sources and original creators
+- **Context**: Provide necessary context for shared content
+- **Verification**: Fact-check before sharing news or information
+
+### Engagement Guidelines:
+- **Authentic Interaction**: Engage genuinely with others
+- **Constructive Discussion**: Foster positive conversations
+- **Respectful Disagreement**: Disagree without attacking individuals
+- **Community Standards**: Follow community norms and etiquette
+
+## ⚖️ Legal Compliance
+
+### Terms of Service:
+- **User Agreement**: Comply with Twitter User Agreement
+- **API Terms**: Follow Twitter API Terms of Service
+- **Commercial Use**: Understand restrictions on commercial usage
+- **Age Requirements**: Ensure compliance with age restrictions
+
+### Privacy & Data Protection:
+- **GDPR Compliance**: Follow EU privacy regulations if applicable
+- **CCPA Compliance**: Follow California privacy laws if applicable
+- **Data Minimization**: Only collect necessary user data
+- **Consent**: Obtain proper consent for data usage
+
+## 🛡️ Security Best Practices
+
+### Account Security:
+- **Strong Authentication**: Use strong passwords and 2FA
+- **API Key Security**: Keep API keys secure and rotate regularly
+- **Access Controls**: Limit API access to necessary personnel
+- **Monitoring**: Monitor for unauthorized access or usage
+
+### Application Security:
+- **Secure Development**: Follow secure coding practices
+- **Regular Updates**: Keep dependencies and libraries updated
+- **Vulnerability Management**: Address security vulnerabilities promptly
+- **Incident Response**: Have plans for security incidents
+
+## 🔍 Monitoring & Compliance
+
+### Regular Reviews:
+- **Content Audits**: Regularly review published content
+- **Engagement Analysis**: Monitor engagement patterns for anomalies
+- **Policy Updates**: Stay current with Twitter policy changes
+- **Community Feedback**: Listen to community concerns
+
+### Enforcement Actions:
+- **Warning Systems**: Understand Twitter's warning systems
+- **Account Restrictions**: Know potential restrictions (shadowban, limits)
+- **Suspension Risks**: Understand what can lead to suspension
+- **Appeal Process**: Know how to appeal enforcement actions
+
+## 📞 Support & Resources
+
+### Official Resources:
+- **Twitter Rules**: https://help.twitter.com/en/rules-and-policies
+- **API Policy**: https://developer.twitter.com/en/developer-terms/policy
+- **Developer Portal**: https://developer.twitter.com/en/portal
+- **Safety Center**: https://help.twitter.com/en/safety-and-security
+
+### Community Guidelines:
+- **Developer Community**: https://twittercommunity.com/
+- **Best Practices**: Follow established community standards
+- **Industry Standards**: Align with social media marketing ethics
+- **Professional Conduct**: Maintain professional behavior
+
+## ⚠️ Red Flags to Avoid
+
+### High-Risk Activities:
+- Buying fake engagement (followers, likes, retweets)
+- Mass following/unfollowing in short periods
+- Posting identical content across multiple accounts
+- Using misleading or clickbait content consistently
+- Engaging in coordinated harassment campaigns
+- Sharing unverified news or misinformation
+
+### API Misuse:
+- Exceeding rate limits repeatedly
+- Scraping data beyond API terms
+- Sharing API access credentials
+- Using API for surveillance or tracking users
+- Building competing social platforms with Twitter data
+
+## 📋 Compliance Checklist
+
+### Before Launching:
+- [ ] Review all applicable Twitter policies
+- [ ] Implement proper rate limiting
+- [ ] Set up monitoring and logging
+- [ ] Create clear terms of service
+- [ ] Establish content moderation processes
+- [ ] Test for security vulnerabilities
+
+### Ongoing Maintenance:
+- [ ] Monitor for policy updates
+- [ ] Review content regularly
+- [ ] Analyze engagement patterns
+- [ ] Update security measures
+- [ ] Train team on compliance requirements
+- [ ] Maintain documentation
+
+---
+
+**Disclaimer**: This guide provides general information and does not constitute legal advice. Always consult Twitter's official documentation and legal counsel for specific compliance requirements.
+
+**Last Updated**: ${new Date().toISOString()}
+**Version**: 1.0 - Twitter API v2 Basic Tier Guidelines`;
+}
