@@ -69,4 +69,46 @@ export interface HashtagAnalyticsArgs {
     endTime?: string;
 }
 
+// Direct Message related interfaces
+export interface SendDirectMessageArgs {
+    recipientId: string;
+    text: string;
+    mediaId?: string;
+    attachments?: string[];
+}
+
+export interface GetDirectMessagesArgs {
+    maxResults?: number;
+    paginationToken?: string;
+    dmEventFields?: string[];
+}
+
+export interface GetDirectMessageEventsArgs {
+    maxResults?: number;
+    paginationToken?: string;
+    dmEventFields?: string[];
+    expansions?: string[];
+    userFields?: string[];
+}
+
+export interface GetConversationArgs {
+    conversationId: string;
+    maxResults?: number;
+    paginationToken?: string;
+    dmEventFields?: string[];
+}
+
+export interface MarkAsReadArgs {
+    messageId: string;
+    conversationId?: string;
+}
+
+export interface CreateMediaMessageArgs {
+    recipientId: string;
+    text: string;
+    mediaId: string;
+    mediaType?: string;
+    altText?: string;
+}
+
 export type TwitterHandler<T> = (client: TwitterClient, args: T) => Promise<HandlerResponse>; 

@@ -435,4 +435,179 @@ export const TOOLS = {
             required: ['tweetId']
         }
     },
+    // Direct Message Tools
+    sendDirectMessage: {
+        description: 'Send a direct message to a specified user',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                recipientId: { 
+                    type: 'string', 
+                    description: 'The ID of the user to send the message to' 
+                },
+                text: { 
+                    type: 'string', 
+                    description: 'The text content of the direct message' 
+                },
+                mediaId: { 
+                    type: 'string', 
+                    description: 'Optional media ID for attaching media to the message' 
+                },
+                attachments: { 
+                    type: 'array', 
+                    items: { type: 'string' },
+                    description: 'Optional array of media IDs to attach to the message' 
+                }
+            },
+            required: ['recipientId', 'text']
+        }
+    },
+    getDirectMessages: {
+        description: 'Retrieve direct message conversations',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                maxResults: { 
+                    type: 'number', 
+                    description: 'Maximum number of results to return (default: 100, max: 100)',
+                    minimum: 1,
+                    maximum: 100
+                },
+                paginationToken: { 
+                    type: 'string', 
+                    description: 'Pagination token for retrieving next page of results' 
+                },
+                dmEventFields: { 
+                    type: 'array', 
+                    items: { 
+                        type: 'string',
+                        enum: ['id', 'text', 'created_at', 'sender_id', 'dm_conversation_id', 'referenced_tweet', 'attachments']
+                    },
+                    description: 'Fields to include in the DM event objects' 
+                }
+            },
+            required: []
+        }
+    },
+    getDirectMessageEvents: {
+        description: 'Get specific direct message events with detailed information',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                maxResults: { 
+                    type: 'number', 
+                    description: 'Maximum number of results to return (default: 100, max: 100)',
+                    minimum: 1,
+                    maximum: 100
+                },
+                paginationToken: { 
+                    type: 'string', 
+                    description: 'Pagination token for retrieving next page of results' 
+                },
+                dmEventFields: { 
+                    type: 'array', 
+                    items: { 
+                        type: 'string',
+                        enum: ['id', 'text', 'created_at', 'sender_id', 'dm_conversation_id', 'referenced_tweet', 'attachments']
+                    },
+                    description: 'Fields to include in the DM event objects' 
+                },
+                expansions: { 
+                    type: 'array', 
+                    items: { 
+                        type: 'string',
+                        enum: ['sender_id', 'referenced_tweet.id', 'attachments.media_keys']
+                    },
+                    description: 'Additional fields to expand in the response' 
+                },
+                userFields: { 
+                    type: 'array', 
+                    items: { 
+                        type: 'string',
+                        enum: ['username', 'name', 'profile_image_url', 'verified']
+                    },
+                    description: 'User fields to include when expanding sender information' 
+                }
+            },
+            required: []
+        }
+    },
+    getConversation: {
+        description: 'Get full conversation history for a specific conversation',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                conversationId: { 
+                    type: 'string', 
+                    description: 'The ID of the conversation to retrieve' 
+                },
+                maxResults: { 
+                    type: 'number', 
+                    description: 'Maximum number of messages to return (default: 100, max: 100)',
+                    minimum: 1,
+                    maximum: 100
+                },
+                paginationToken: { 
+                    type: 'string', 
+                    description: 'Pagination token for retrieving next page of results' 
+                },
+                dmEventFields: { 
+                    type: 'array', 
+                    items: { 
+                        type: 'string',
+                        enum: ['id', 'text', 'created_at', 'sender_id', 'dm_conversation_id', 'referenced_tweet', 'attachments']
+                    },
+                    description: 'Fields to include in the DM event objects' 
+                }
+            },
+            required: ['conversationId']
+        }
+    },
+    markAsRead: {
+        description: 'Mark direct messages as read (Note: May require special API access)',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                messageId: { 
+                    type: 'string', 
+                    description: 'The ID of the message to mark as read' 
+                },
+                conversationId: { 
+                    type: 'string', 
+                    description: 'Optional conversation ID for context' 
+                }
+            },
+            required: ['messageId']
+        }
+    },
+    createMediaMessage: {
+        description: 'Send a direct message with media attachments',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                recipientId: { 
+                    type: 'string', 
+                    description: 'The ID of the user to send the message to' 
+                },
+                text: { 
+                    type: 'string', 
+                    description: 'The text content of the direct message' 
+                },
+                mediaId: { 
+                    type: 'string', 
+                    description: 'The media ID of the uploaded media to attach' 
+                },
+                mediaType: { 
+                    type: 'string', 
+                    enum: ['image/jpeg', 'image/png', 'image/gif', 'video/mp4'],
+                    description: 'MIME type of the media file' 
+                },
+                altText: { 
+                    type: 'string', 
+                    description: 'Alternative text for the media (accessibility)' 
+                }
+            },
+            required: ['recipientId', 'text', 'mediaId']
+        }
+    }
 }; 

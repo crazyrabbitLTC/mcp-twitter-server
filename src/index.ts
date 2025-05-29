@@ -47,6 +47,14 @@ import {
     handleSearchTweets,
     handleHashtagAnalytics
 } from './handlers/search.handlers.js';
+import {
+    handleSendDirectMessage,
+    handleGetDirectMessages,
+    handleGetDirectMessageEvents,
+    handleGetConversation,
+    handleMarkAsRead,
+    handleCreateMediaMessage
+} from './handlers/directmessage.handlers.js';
 import { GetUserTimelineArgs } from './types/handlers.js';
 
 // Load environment variables
@@ -254,6 +262,66 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                     endTime?: string;
                 };
                 response = await handleHashtagAnalytics(client, { hashtag, startTime, endTime });
+                break;
+            }
+            // Direct Message handlers
+            case 'sendDirectMessage': {
+                const { recipientId, text, mediaId, attachments } = request.params.arguments as {
+                    recipientId: string;
+                    text: string;
+                    mediaId?: string;
+                    attachments?: string[];
+                };
+                response = await handleSendDirectMessage(client, { recipientId, text, mediaId, attachments });
+                break;
+            }
+            case 'getDirectMessages': {
+                const { maxResults, paginationToken, dmEventFields } = request.params.arguments as {
+                    maxResults?: number;
+                    paginationToken?: string;
+                    dmEventFields?: string[];
+                };
+                response = await handleGetDirectMessages(client, { maxResults, paginationToken, dmEventFields });
+                break;
+            }
+            case 'getDirectMessageEvents': {
+                const { maxResults, paginationToken, dmEventFields, expansions, userFields } = request.params.arguments as {
+                    maxResults?: number;
+                    paginationToken?: string;
+                    dmEventFields?: string[];
+                    expansions?: string[];
+                    userFields?: string[];
+                };
+                response = await handleGetDirectMessageEvents(client, { maxResults, paginationToken, dmEventFields, expansions, userFields });
+                break;
+            }
+            case 'getConversation': {
+                const { conversationId, maxResults, paginationToken, dmEventFields } = request.params.arguments as {
+                    conversationId: string;
+                    maxResults?: number;
+                    paginationToken?: string;
+                    dmEventFields?: string[];
+                };
+                response = await handleGetConversation(client, { conversationId, maxResults, paginationToken, dmEventFields });
+                break;
+            }
+            case 'markAsRead': {
+                const { messageId, conversationId } = request.params.arguments as {
+                    messageId: string;
+                    conversationId?: string;
+                };
+                response = await handleMarkAsRead(client, { messageId, conversationId });
+                break;
+            }
+            case 'createMediaMessage': {
+                const { recipientId, text, mediaId, mediaType, altText } = request.params.arguments as {
+                    recipientId: string;
+                    text: string;
+                    mediaId: string;
+                    mediaType?: string;
+                    altText?: string;
+                };
+                response = await handleCreateMediaMessage(client, { recipientId, text, mediaId, mediaType, altText });
                 break;
             }
             default:
