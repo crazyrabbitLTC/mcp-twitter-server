@@ -144,4 +144,9 @@ export interface GetMutedUsersArgs {
     userFields?: string[];
 }
 
+// Authenticated user related interface
+export interface GetAuthenticatedUserArgs {
+    userFields?: TTweetv2UserField[];
+}
+
 export type TwitterHandler<T> = (client: TwitterClient, args: T) => Promise<HandlerResponse>; 

@@ -34,7 +34,8 @@ import {
     handleFollowUser,
     handleUnfollowUser,
     handleGetFollowers,
-    handleGetFollowing
+    handleGetFollowing,
+    handleGetAuthenticatedUser
 } from './handlers/user.handlers.js';
 import {
     handleCreateList,
@@ -64,6 +65,7 @@ import {
     handleGetMutedUsers
 } from './handlers/moderation.handlers.js';
 import { GetUserTimelineArgs } from './types/handlers.js';
+import { TTweetv2UserField } from 'twitter-api-v2';
 
 // Load environment variables
 config();
@@ -198,6 +200,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             case 'getUserInfo': {
                 const { username } = request.params.arguments as { username: string };
                 response = await handleGetUserInfo(client, { username });
+                break;
+            }
+            case 'getAuthenticatedUser': {
+                const { userFields } = request.params.arguments as { userFields?: TTweetv2UserField[] };
+                response = await handleGetAuthenticatedUser(client, { userFields });
                 break;
             }
             case 'getUserTimeline': {

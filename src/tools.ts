@@ -117,41 +117,25 @@ export const TOOLS = {
         }
     },
     getUserTimeline: {
-        description: 'Get recent tweets from a user timeline',
+        description: 'Get tweets from a specific user\'s timeline',
         inputSchema: {
             type: 'object',
             properties: {
-                userId: { type: 'string', description: 'The ID of the user' },
-                maxResults: {
-                    type: 'number',
-                    description: 'Maximum number of results to return'
+                username: { 
+                    type: 'string', 
+                    description: 'The username of the user whose timeline to fetch' 
                 },
-                tweetFields: {
-                    type: 'array',
-                    items: {
-                        type: 'string',
-                        enum: ['created_at', 'author_id', 'conversation_id', 'public_metrics', 'entities', 'context_annotations']
-                    },
-                    description: 'Fields to include in the tweet objects'
+                maxResults: { 
+                    type: 'number', 
+                    description: 'Maximum number of tweets to return (default: 10, max: 100)' 
                 },
-                expansions: {
-                    type: 'array',
-                    items: {
-                        type: 'string',
-                        enum: ['author_id', 'referenced_tweets.id', 'in_reply_to_user_id', 'attachments.media_keys']
-                    },
-                    description: 'Additional fields to expand in the response'
-                },
-                userFields: {
-                    type: 'array',
-                    items: {
-                        type: 'string',
-                        enum: ['username', 'name', 'profile_image_url', 'verified']
-                    },
-                    description: 'User fields to include in the response'
+                tweetFields: { 
+                    type: 'array', 
+                    items: { type: 'string' },
+                    description: 'Additional tweet fields to include' 
                 }
             },
-            required: ['userId']
+            required: ['username']
         }
     },
     getTweetById: {
@@ -183,6 +167,20 @@ export const TOOLS = {
             },
             required: ['username'],
         },
+    },
+    getAuthenticatedUser: {
+        description: 'Get the authenticated user\'s own profile information without needing to specify username or ID',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                userFields: {
+                    type: 'array',
+                    items: { type: 'string' },
+                    description: 'Additional user fields to include (e.g., ["id", "username", "name", "description", "public_metrics", "verified", "profile_image_url", "created_at"])'
+                }
+            },
+            required: []
+        }
     },
     getTweetsByIds: {
         description: 'Get multiple tweets by their IDs',

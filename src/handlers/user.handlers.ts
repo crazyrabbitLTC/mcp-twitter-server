@@ -3,7 +3,8 @@ import { UserV2, TTweetv2UserField } from 'twitter-api-v2';
 import { 
     HandlerResponse, 
     TwitterHandler,
-    UserHandlerArgs 
+    UserHandlerArgs,
+    GetAuthenticatedUserArgs
 } from '../types/handlers.js';
 import { createResponse } from '../utils/response.js';
 
@@ -145,6 +146,37 @@ export const handleGetFollowing: TwitterHandler<GetFollowingArgs> = async (
                 throw new Error(`Get following functionality requires elevated permissions. This endpoint may require Pro tier access ($5,000/month) or special permission approval from X. Current Basic tier ($200/month) has limited access to following data for privacy reasons. Contact X Developer Support or consider upgrading at https://developer.x.com/en/portal/products/pro`);
             }
             throw new Error(`Failed to get following: ${error.message}`);
+        }
+        throw error;
+    }
+};
+
+/**
+ * Get the authenticated user's own profile information
+ */
+export const handleGetAuthenticatedUser: TwitterHandler<GetAuthenticatedUserArgs> = async (
+    client: TwitterClient,
+    { userFields }: GetAuthenticatedUserArgs
+): Promise<HandlerResponse> => {
+    try {
+        const me = await client.v2.me({
+            'user.fields': (userFields as TTweetv2UserField[]) || ['id', 'username', 'name', 'description', 'public_metrics', 'verified', 'profile_image_url', 'created_at'] as TTweetv2UserField[]
+        });
+
+        if (!me.data) {
+            throw new Error('Unable to retrieve authenticated user information');
+        }
+
+        return createResponse(`Authenticated user info: ${JSON.stringify(me.data, null, 2)}`);
+    } catch (error) {
+        if (error instanceof Error) {
+            if (error.message.includes('401')) {
+                throw new Error(`Authentication failed. Please check your API credentials and tokens. This endpoint requires valid OAuth 1.0a User Context or OAuth 2.0 Authorization Code with PKCE authentication.`);
+            }
+            if (error.message.includes('429')) {
+                throw new Error(`Rate limit exceeded. Please wait before making another request.`);
+            }
+            throw new Error(`Failed to get authenticated user: ${error.message}`);
         }
         throw error;
     }
