@@ -110,6 +110,9 @@ export const handleGetFollowers: TwitterHandler<GetFollowersArgs> = async (
         return createResponse(`Followers for ${username}: ${JSON.stringify(followers.data, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
+            if (error.message.includes('403')) {
+                throw new Error(`Get followers functionality requires elevated permissions. This endpoint may require Pro tier access ($5,000/month) or special permission approval from X. Current Basic tier ($200/month) has limited access to follower data for privacy reasons. Contact X Developer Support or consider upgrading at https://developer.x.com/en/portal/products/pro`);
+            }
             throw new Error(`Failed to get followers: ${error.message}`);
         }
         throw error;
@@ -138,6 +141,9 @@ export const handleGetFollowing: TwitterHandler<GetFollowingArgs> = async (
         return createResponse(`Users followed by ${username}: ${JSON.stringify(following.data, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
+            if (error.message.includes('403')) {
+                throw new Error(`Get following functionality requires elevated permissions. This endpoint may require Pro tier access ($5,000/month) or special permission approval from X. Current Basic tier ($200/month) has limited access to following data for privacy reasons. Contact X Developer Support or consider upgrading at https://developer.x.com/en/portal/products/pro`);
+            }
             throw new Error(`Failed to get following: ${error.message}`);
         }
         throw error;

@@ -1,0 +1,171 @@
+<context>
+# Overview  
+An existing Model Context Protocol (MCP) server implementation that provides Twitter API integration for AI assistants and LLMs. The server is functional with 22 implemented tools and basic MCP protocol compliance. This project focuses on testing, fixing, and enhancing the existing functionality to achieve feature parity with our Twitter API access level, while adding prompts, resources, and templates for better user experience.
+
+# Current Status
+## Working Functionality
+- ✅ 22 Twitter tools implemented and registered
+- ✅ MCP protocol compliance with proper JSON-RPC responses
+- ✅ User information retrieval (verified with real data)
+- ✅ Error handling for invalid tools and requests
+- ✅ Environment variable authentication system
+- ✅ TypeScript implementation with proper types
+
+## Known Issues to Address
+- ⚠️ Some tools return API 400 errors (search, timeline) - need API access level investigation
+- ⚠️ Need systematic testing of all 22 tools via command line
+- ⚠️ Missing prompts and resources to enhance MCP functionality
+- ⚠️ Unclear which tools work with current Twitter API access tier
+
+# Core Enhancement Features  
+## Tool Testing and Fixes
+- Systematic command-line testing of all 22 implemented tools
+- Fix tools returning 400 errors by investigating API access requirements
+- Map working vs non-working tools based on API tier limitations
+- Implement fallback behaviors for limited access scenarios
+
+## API Access Level Mapping
+- Determine current Twitter API access tier (Basic, Pro, Enterprise)
+- Identify which tools require elevated access
+- Map missing tools that could be implemented with current access level
+- Document API limitations and workarounds
+
+## MCP Enhancement Features
+- Implement MCP prompts for common Twitter workflows
+- Create MCP resources for Twitter user profiles, trending topics
+- Develop templates for tweet composition and social media strategies
+- Add structured output schemas for better tool integration
+
+## Missing Tool Implementation
+- Identify gaps in current tool coverage vs Twitter API capabilities
+- Implement additional tools supported by current API access level
+- Add bulk operations where API permits
+- Enhance existing tools with additional parameters and options
+
+# User Experience Enhancement
+## Prompts for Common Workflows
+- Tweet composition assistance with hashtag suggestions
+- Social media strategy planning and scheduling
+- User engagement analysis and reporting
+- Content moderation and monitoring workflows
+
+## Resources for Dynamic Data
+- Real-time trending topics and hashtags
+- User profile templates and analytics
+- Tweet templates for different content types
+- API usage and rate limit monitoring
+
+## Templates and Structured Outputs
+- Structured tweet analytics reports
+- User engagement summaries
+- Content planning templates
+- API response standardization
+</context>
+
+<PRD>
+# Technical Architecture  
+## Current System Status
+- Node.js/TypeScript MCP server using @modelcontextprotocol/sdk (WORKING)
+- Twitter API v2 client using twitter-api-v2 library (WORKING)
+- Zod schema validation for request/response handling (WORKING)
+- Environment-based configuration management (WORKING)
+- Stdio transport for MCP communication (WORKING)
+
+## Enhancement Priorities
+- Command-line testing framework for all tools
+- API access level detection and documentation
+- Prompts and resources implementation
+- Tool output standardization and error improvement
+- Missing tool gap analysis and implementation
+
+## Testing and Validation Strategy
+- Manual command-line testing with JSON inputs for all 22 tools
+- API response analysis to determine access level limitations
+- Error pattern identification and improvement
+- Performance and rate limit testing
+
+# Development Roadmap  
+## Phase 1: Testing and Stabilization (Current Focus)
+- Systematic testing of all 22 tools via command line JSON inputs
+- Fix tools returning 400 errors through API access investigation
+- Document working vs limited tools based on API tier
+- Enhance error messages and handling for better user experience
+
+## Phase 2: API Access Optimization
+- Research Twitter API documentation for current access level
+- Map missing tools that can be implemented with current tier
+- Implement additional supported tools for feature parity
+- Add bulk operations and enhanced parameters where possible
+
+## Phase 3: MCP Enhancement Features
+- Implement prompts for common Twitter workflows
+- Create resources for trending topics and user profiles
+- Develop templates for tweet composition and analytics
+- Add structured output schemas for better tool integration
+
+## Phase 4: Advanced Features
+- Real-time data integration where API permits
+- Enhanced analytics and reporting tools
+- Content planning and scheduling templates
+- API usage monitoring and optimization
+
+# Logical Dependency Chain
+## Immediate Testing Phase
+1. Test all 22 existing tools systematically via command line
+2. Document which tools work vs encounter API limitations
+3. Fix tools with correctable issues (parameter problems, etc.)
+4. Research Twitter API documentation for access level details
+
+## Enhancement Phase
+1. Implement missing tools supported by current API access
+2. Add prompts for common workflows (tweet composition, analytics)
+3. Create resources for dynamic Twitter data (trending, profiles)
+4. Develop templates and structured outputs
+
+## Optimization Phase
+1. Enhance existing tools with additional parameters
+2. Implement bulk operations where API supports
+3. Add advanced error handling and fallback behaviors
+4. Create comprehensive documentation and examples
+
+# Risks and Mitigations  
+## Current Known Issues
+- Some tools fail with 400 errors - may be API access level limitations
+- Unclear which features are available with current Twitter API tier
+- Need systematic testing to identify all functional vs broken tools
+- Missing prompts/resources limit MCP functionality potential
+
+## Testing Approach
+- Manual command-line testing with source .env for authentication
+- Document exact API responses for failed tools
+- Research Twitter API documentation for access requirements
+- Implement fallback behaviors for limited access scenarios
+
+## API Access Considerations
+- Current tools may require different API access tiers
+- Some functionality may need Business or Enterprise level access
+- Need to optimize for available tier rather than assuming full access
+- Document limitations clearly for users
+
+# Appendix  
+## Current Implementation Assessment
+- 22 Twitter tools implemented (postTweet, getUserInfo, likeTweet, etc.)
+- Basic functionality verified (getUserInfo works with real data)
+- MCP protocol compliance confirmed
+- Environment authentication system functional
+- Some tools limited by API access level (search, timeline features)
+
+## Immediate Testing Priority
+1. getUserInfo ✅ (verified working)
+2. postTweet (needs testing - write operation)
+3. searchTweets ⚠️ (returning 400 errors)
+4. getUserTimeline ⚠️ (returning 400 errors)
+5. All 18 remaining tools need systematic testing
+
+## Technical Specifications
+- TypeScript with strict type checking (maintained)
+- Modular handler architecture (working)
+- Comprehensive input validation with Zod (working)
+- Environment-based configuration (working)
+- Error handling needs improvement based on testing results
+</PRD> 

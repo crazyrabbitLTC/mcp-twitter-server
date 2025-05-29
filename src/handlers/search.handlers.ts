@@ -44,6 +44,9 @@ export const handleSearchTweets: TwitterHandler<SearchTweetsArgs> = async (
         return createResponse(`Search results: ${JSON.stringify(formattedTweets, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
+            if (error.message.includes('400') && error.message.includes('Invalid Request')) {
+                throw new Error(`Search functionality requires Pro tier access ($5,000/month) or higher. Current Basic tier ($200/month) does not include recent search API access. Consider upgrading at https://developer.x.com/en/portal/products/pro or use alternative data sources.`);
+            }
             throw new Error(`Failed to search tweets: ${error.message}`);
         }
         throw error;
@@ -81,6 +84,9 @@ export const handleHashtagAnalytics: TwitterHandler<HashtagAnalyticsArgs> = asyn
         return createResponse(`Hashtag Analytics for ${hashtag}:\n${JSON.stringify(analytics, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
+            if (error.message.includes('400') && error.message.includes('Invalid Request')) {
+                throw new Error(`Hashtag analytics requires Pro tier access ($5,000/month) or higher for search functionality. Current Basic tier ($200/month) does not include recent search API access. Consider upgrading at https://developer.x.com/en/portal/products/pro or use alternative analytics sources.`);
+            }
             throw new Error(`Failed to get hashtag analytics: ${error.message}`);
         }
         throw error;

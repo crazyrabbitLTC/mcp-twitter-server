@@ -1,8 +1,17 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { ListToolsRequestSchema, CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js';
+import { 
+    ListToolsRequestSchema, 
+    CallToolRequestSchema,
+    ListPromptsRequestSchema,
+    GetPromptRequestSchema,
+    ListResourcesRequestSchema,
+    ReadResourceRequestSchema
+} from '@modelcontextprotocol/sdk/types.js';
 import { TwitterClient } from './client/twitter.js';
 import { TOOLS } from './tools.js';
+import { PROMPTS, getPromptContent } from './prompts.js';
+import { RESOURCES, handleResource } from './resources.js';
 import { config } from 'dotenv';
 import {
     handlePostTweet,
@@ -48,7 +57,9 @@ const server = new Server({
     version: '0.0.1',
 }, {
     capabilities: {
-        tools: TOOLS
+        tools: {},
+        prompts: {},
+        resources: {}
     }
 });
 
@@ -66,6 +77,42 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         ...tool
     }))
 }));
+
+server.setRequestHandler(ListPromptsRequestSchema, async () => ({
+    prompts: Object.values(PROMPTS)
+}));
+
+server.setRequestHandler(GetPromptRequestSchema, async (request) => {
+    const { name, arguments: args } = request.params;
+    
+    if (!PROMPTS[name]) {
+        throw new Error(`Unknown prompt: ${name}`);
+    }
+    
+    const content = getPromptContent(name, args || {});
+    
+    return {
+        description: PROMPTS[name].description,
+        messages: [
+            {
+                role: 'user',
+                content: {
+                    type: 'text',
+                    text: content
+                }
+            }
+        ]
+    };
+});
+
+server.setRequestHandler(ListResourcesRequestSchema, async () => ({
+    resources: RESOURCES
+}));
+
+server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+    const { uri } = request.params;
+    return await handleResource(uri, client);
+});
 
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
     try {

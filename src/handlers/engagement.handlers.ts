@@ -126,6 +126,9 @@ export const handleGetLikedTweets: TwitterHandler<GetLikedTweetsArgs> = async (
         return createResponse(`Liked tweets: ${JSON.stringify(tweets, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
+            if (error.message.includes('400') && error.message.includes('Invalid Request')) {
+                throw new Error(`Get liked tweets functionality may require elevated permissions or Pro tier access. Current Basic tier ($200/month) has limited access to user engagement data. Consider upgrading to Pro tier ($5,000/month) at https://developer.x.com/en/portal/products/pro or use alternative methods to track user engagement.`);
+            }
             throw new Error(`Failed to get liked tweets: ${error.message}`);
         }
         throw error;
