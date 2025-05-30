@@ -1,11 +1,10 @@
-# Twitter MCP Server
+# X (Twitter) MCP Server
 
-A comprehensive Model Context Protocol server implementation for Twitter/X API integration with professional workflow automation, enhanced error handling, and real-time documentation.
+A comprehensive Model Context Protocol server implementation for X (Twitter) API integration with professional workflow automation, enhanced error handling, and real-time documentation.
 
 ## 🚀 Features
 
-- **22 Twitter/X API Tools** - Complete tweet, user, engagement, and list management
-- **82% Success Rate** - 18/22 tools working with Basic tier access
+- **22 X (Twitter) API Tools** - Complete tweet, user, engagement, and list management
 - **Professional Error Handling** - Clear upgrade guidance for API limitations
 - **5 Workflow Prompts** - Pre-built automation templates
 - **6 Dynamic Resources** - Real-time API documentation and status
@@ -17,7 +16,7 @@ A comprehensive Model Context Protocol server implementation for Twitter/X API i
 
 - Node.js 18+ 
 - npm or yarn
-- Twitter API credentials (Basic tier minimum - $200/month)
+- X (Twitter) API credentials (Basic tier minimum - $200/month)
 
 ### Local Installation
 
@@ -31,7 +30,7 @@ A comprehensive Model Context Protocol server implementation for Twitter/X API i
 2. **Environment Setup**
    ```bash
    cp .env.example .env
-   # Edit .env with your Twitter API credentials
+   # Edit .env with your X (Twitter) API credentials
    ```
 
 3. **Build and Run**
@@ -49,7 +48,7 @@ A comprehensive Model Context Protocol server implementation for Twitter/X API i
    source .env && echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "getUserInfo", "arguments": {"username": "elonmusk"}}}' | node dist/index.js
    ```
 
-## 🔑 Twitter API Setup
+## 🔑 X (Twitter) API Setup
 
 ### Required Credentials
 
@@ -68,8 +67,6 @@ X_ACCESS_TOKEN_SECRET=your_access_token_secret_here
 |------|------|---------------|---------------|
 | **Basic** | $200/month | 18/22 tools | searchTweets, getHashtagAnalytics |
 | **Pro** | $5,000/month | All 22 tools | None |
-
-**Our Current Status**: Basic tier access with 82% functionality
 
 ## 🛠️ Available Tools (18/22 Working)
 
@@ -92,7 +89,7 @@ X_ACCESS_TOKEN_SECRET=your_access_token_secret_here
 - `getFollowing` - Get following ⚠️ (403 - requires special permissions)
 
 ### ✅ List Management (All Working)
-- `createList` - Create Twitter lists
+- `createList` - Create X (Twitter) lists
 - `getUserLists` - Get user's lists
 - `addUserToList` / `removeUserFromList` - Manage list members
 - `getListMembers` - Get list members
@@ -110,7 +107,7 @@ Our server includes 5 professional workflow templates:
 Interactive guidance for creating engaging tweets with hashtags, mentions, and media.
 
 ### 2. Analytics Reporting (`analytics-report`) 
-Comprehensive Twitter analytics workflow for business insights.
+Comprehensive X (Twitter) analytics workflow for business insights.
 
 ### 3. Content Strategy (`content-strategy`)
 Strategic content planning and audience engagement workflows.
@@ -147,7 +144,7 @@ source .env && echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params
 ```
 
 ### Test Results Summary
-- **18 Tools Working** (82% success rate)
+- **18 Tools Working** on Basic tier
 - **4 Tools Limited** by API tier/permissions
 - **Professional error messages** with upgrade guidance
 - **All core functionality** operational
@@ -158,7 +155,7 @@ source .env && echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params
 ```json
 {
   "mcpServers": {
-    "twitter": {
+    "x-twitter": {
       "command": "node",
       "args": ["/path/to/twitter-server/dist/index.js"],
       "env": {
@@ -258,7 +255,7 @@ Our enhanced error handling provides:
 Example error response:
 ```json
 {
-  "error": "This endpoint requires Twitter API Pro tier access ($5,000/month). Visit https://developer.twitter.com/en/docs/twitter-api/getting-started/about-twitter-api#v2-access-leve to upgrade your access level."
+  "error": "This endpoint requires X (Twitter) API Pro tier access ($5,000/month). Visit https://developer.twitter.com/en/docs/twitter-api/getting-started/about-twitter-api#v2-access-leve to upgrade your access level."
 }
 ```
 
@@ -308,7 +305,7 @@ npm run dev      # Development mode with watch
 - **getLikedTweets**: Parameter validation issues
 
 ### Recommendations
-- **Current Setup**: Excellent for basic Twitter automation
+- **Current Setup**: Excellent for basic X (Twitter) automation
 - **For Advanced Analytics**: Consider Pro tier upgrade
 - **For Followers/Following**: Request elevated permissions
 
@@ -335,7 +332,7 @@ node --version
 ### Getting Help
 
 1. **Check error messages** - Our enhanced error handling provides clear guidance
-2. **Review API documentation** - Twitter Developer Portal
+2. **Review API documentation** - X (Twitter) Developer Portal
 3. **Test with working tools first** - Verify basic setup
 4. **Check environment variables** - Ensure all credentials are set
 
@@ -344,7 +341,6 @@ node --version
 ## 📊 Current Status
 
 - **22 Total Tools**: 18 working, 4 limited
-- **82% Success Rate**: Excellent for Basic tier
 - **Professional Error Handling**: Clear upgrade guidance
 - **Full MCP Compliance**: Tools, prompts, resources
 - **Production Ready**: Enhanced reliability and UX

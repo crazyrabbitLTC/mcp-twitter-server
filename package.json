@@ -1,7 +1,7 @@
 {
   "name": "mcp-twitter-server",
   "version": "0.2.0",
-  "description": "A Model Context Protocol server implementation for Twitter API integration",
+  "description": "A Model Context Protocol server implementation for X (Twitter) API integration",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
@@ -11,6 +11,7 @@
     "prepare": "npm run build"
   },
   "keywords": [
+    "x",
     "twitter",
     "mcp",
     "model-context-protocol",
