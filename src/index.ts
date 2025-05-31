@@ -208,8 +208,21 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 break;
             }
             case 'getUserTimeline': {
-                const args = request.params.arguments as unknown as GetUserTimelineArgs;
-                response = await handleGetUserTimeline(client, args);
+                const { username, maxResults, tweetFields } = request.params.arguments as { 
+                    username: string; 
+                    maxResults?: number; 
+                    tweetFields?: string[] 
+                };
+                
+                // Convert username to userId
+                const userResponse = await client.getUserByUsername(username);
+                const userId = userResponse.data.id;
+                
+                response = await handleGetUserTimeline(client, { 
+                    userId, 
+                    maxResults, 
+                    tweetFields 
+                });
                 break;
             }
             case 'followUser': {
