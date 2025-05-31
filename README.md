@@ -1,3 +1,5 @@
+
+![ChatGPT Image May 30, 2025, 03_20_40 PM](https://github.com/user-attachments/assets/a9e3116e-414a-40cf-aad1-635ea5a82c7a)
 # X (Twitter) MCP Server
 
 A comprehensive Model Context Protocol server implementation for X (Twitter) API integration with professional workflow automation, enhanced error handling, and real-time documentation.
