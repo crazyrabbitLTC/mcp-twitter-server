@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { SOCIALDATA_TOOLS } from './socialdata-tools.js';
 
 export const TOOLS = {
     postTweet: {
@@ -730,5 +731,8 @@ export const TOOLS = {
             },
             required: []
         }
-    }
+    },
+    
+    // SocialData.tools enhanced research and analytics
+    ...SOCIALDATA_TOOLS
 }; 

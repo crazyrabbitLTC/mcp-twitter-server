@@ -64,6 +64,14 @@ import {
     handleUnmuteUser,
     handleGetMutedUsers
 } from './handlers/moderation.handlers.js';
+import {
+    handleAdvancedTweetSearch,
+    handleHistoricalTweetSearch,
+    handleTrendingTopicsSearch,
+    handleBulkUserProfiles,
+    handleUserGrowthAnalytics,
+    handleUserInfluenceMetrics
+} from './handlers/socialdata/index.js';
 import { GetUserTimelineArgs } from './types/handlers.js';
 import { TTweetv2UserField } from 'twitter-api-v2';
 
@@ -388,6 +396,37 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                     userFields?: string[] 
                 };
                 response = await handleGetMutedUsers(client, { maxResults, paginationToken, userFields });
+                break;
+            }
+            // SocialData.tools handlers
+            case 'advancedTweetSearch': {
+                const args = request.params.arguments as any;
+                response = await handleAdvancedTweetSearch(client, args);
+                break;
+            }
+            case 'historicalTweetSearch': {
+                const args = request.params.arguments as any;
+                response = await handleHistoricalTweetSearch(client, args);
+                break;
+            }
+            case 'trendingTopicsSearch': {
+                const args = request.params.arguments as any;
+                response = await handleTrendingTopicsSearch(client, args);
+                break;
+            }
+            case 'bulkUserProfiles': {
+                const args = request.params.arguments as any;
+                response = await handleBulkUserProfiles(client, args);
+                break;
+            }
+            case 'userGrowthAnalytics': {
+                const args = request.params.arguments as any;
+                response = await handleUserGrowthAnalytics(client, args);
+                break;
+            }
+            case 'userInfluenceMetrics': {
+                const args = request.params.arguments as any;
+                response = await handleUserInfluenceMetrics(client, args);
                 break;
             }
             default:

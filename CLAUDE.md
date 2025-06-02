@@ -22,11 +22,16 @@ This is a Model Context Protocol (MCP) server that provides Twitter API integrat
 
 ### Handler Organization
 
+**Twitter API Handlers:**
 - `tweet.handlers.ts` - Post, get, reply, delete tweets, user timeline
 - `user.handlers.ts` - User info, follow/unfollow, followers/following
 - `engagement.handlers.ts` - Like, unlike, retweet, retweets
 - `list.handlers.ts` - Create lists, add/remove members, get members
 - `search.handlers.ts` - Search tweets, hashtag analytics
+
+**SocialData.tools Handlers:**
+- `handlers/socialdata/search.handlers.ts` - Advanced search, historical data, trending topics
+- `handlers/socialdata/user.handlers.ts` - Bulk profiles, growth analytics, influence metrics
 
 ### Key Patterns
 
@@ -42,6 +47,10 @@ Required Twitter API credentials in `.env`:
 - `X_API_SECRET` 
 - `X_ACCESS_TOKEN`
 - `X_ACCESS_TOKEN_SECRET`
+
+Optional SocialData.tools API credentials for enhanced search and analytics:
+- `SOCIALDATA_API_KEY` - Get from https://socialdata.tools
+- `SOCIALDATA_BASE_URL` - Optional, defaults to https://api.socialdata.tools
 
 ### Known Issues
 
