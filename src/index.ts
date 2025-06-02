@@ -70,7 +70,16 @@ import {
     handleTrendingTopicsSearch,
     handleBulkUserProfiles,
     handleUserGrowthAnalytics,
-    handleUserInfluenceMetrics
+    handleUserInfluenceMetrics,
+    handleGetFullThread,
+    handleGetConversationTree,
+    handleGetThreadMetrics,
+    handleFindMutualConnections,
+    handleAnalyzeFollowerDemographics,
+    handleMapInfluenceNetwork,
+    handleGetHashtagTrends,
+    handleAnalyzeSentiment,
+    handleTrackVirality
 } from './handlers/socialdata/index.js';
 import { GetUserTimelineArgs } from './types/handlers.js';
 import { TTweetv2UserField } from 'twitter-api-v2';
@@ -427,6 +436,54 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             case 'userInfluenceMetrics': {
                 const args = request.params.arguments as any;
                 response = await handleUserInfluenceMetrics(client, args);
+                break;
+            }
+            // Thread and conversation analysis handlers
+            case 'getFullThread': {
+                const args = request.params.arguments as any;
+                response = await handleGetFullThread(client, args);
+                break;
+            }
+            case 'getConversationTree': {
+                const args = request.params.arguments as any;
+                response = await handleGetConversationTree(client, args);
+                break;
+            }
+            case 'getThreadMetrics': {
+                const args = request.params.arguments as any;
+                response = await handleGetThreadMetrics(client, args);
+                break;
+            }
+            // Network analysis handlers
+            case 'findMutualConnections': {
+                const args = request.params.arguments as any;
+                response = await handleFindMutualConnections(client, args);
+                break;
+            }
+            case 'analyzeFollowerDemographics': {
+                const args = request.params.arguments as any;
+                response = await handleAnalyzeFollowerDemographics(client, args);
+                break;
+            }
+            case 'mapInfluenceNetwork': {
+                const args = request.params.arguments as any;
+                response = await handleMapInfluenceNetwork(client, args);
+                break;
+            }
+            // Advanced analytics handlers
+            case 'getHashtagTrends': {
+                const args = request.params.arguments as any;
+                response = await handleGetHashtagTrends(client, args);
+                break;
+            }
+            case 'analyzeSentiment': {
+                const args = request.params.arguments as any;
+                response = await handleAnalyzeSentiment(client, args);
+                break;
+            }
+            case 'trackVirality': {
+                const args = request.params.arguments as any;
+                response = await handleTrackVirality(client, args);
                 break;
             }
             default:

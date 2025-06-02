@@ -91,3 +91,22 @@ export interface NetworkMappingArgs {
     depth?: number;
     connectionTypes?: ('followers' | 'following' | 'mutual')[];
 }
+
+// Advanced analytics types
+export interface HashtagTrendsArgs {
+    hashtag: string;
+    timeframe?: 'hourly' | 'daily' | 'weekly';
+    period?: number;
+}
+
+export interface SentimentAnalysisArgs {
+    query: string;
+    sampleSize?: number;
+    includeKeywords?: boolean;
+}
+
+export interface ViralityTrackingArgs {
+    tweetId: string;
+    trackingPeriod?: string;
+    analyzeSpread?: boolean;
+}
