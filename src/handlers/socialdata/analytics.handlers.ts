@@ -7,7 +7,8 @@ import { SocialDataHandler } from '../../types/socialdata.js';
 import { 
     createSocialDataResponse, 
     formatSocialDataError, 
-    formatAnalytics
+    formatAnalytics,
+    createMissingApiKeyResponse
 } from '../../utils/socialdata-response.js';
 
 interface HashtagTrendsArgs {
@@ -34,6 +35,10 @@ export const handleGetHashtagTrends: SocialDataHandler<HashtagTrendsArgs> = asyn
 ) => {
     try {
         const socialClient = getSocialDataClient();
+        
+        if (!socialClient) {
+            return createMissingApiKeyResponse('Hashtag Trends Analysis');
+        }
         
         // Clean hashtag
         const cleanHashtag = hashtag.replace(/^#/, '');
@@ -135,6 +140,10 @@ export const handleAnalyzeSentiment: SocialDataHandler<SentimentAnalysisArgs> = 
 ) => {
     try {
         const socialClient = getSocialDataClient();
+        
+        if (!socialClient) {
+            return createMissingApiKeyResponse('Sentiment Analysis');
+        }
         
         const result = await socialClient.searchTweets({
             query,
@@ -242,6 +251,10 @@ export const handleTrackVirality: SocialDataHandler<ViralityTrackingArgs> = asyn
 ) => {
     try {
         const socialClient = getSocialDataClient();
+        
+        if (!socialClient) {
+            return createMissingApiKeyResponse('Virality Tracking');
+        }
         
         // Search for retweets and mentions of the tweet
         const viralQuery = `${tweetId} OR url:${tweetId}`;

@@ -13,7 +13,8 @@ import {
     createSocialDataResponse, 
     formatSocialDataError, 
     formatUserList,
-    formatAnalytics
+    formatAnalytics,
+    createMissingApiKeyResponse
 } from '../../utils/socialdata-response.js';
 
 export const handleBulkUserProfiles: SocialDataHandler<BulkUserProfilesArgs> = async (
@@ -22,6 +23,10 @@ export const handleBulkUserProfiles: SocialDataHandler<BulkUserProfilesArgs> = a
 ) => {
     try {
         const socialClient = getSocialDataClient();
+        
+        if (!socialClient) {
+            return createMissingApiKeyResponse('Bulk User Profiles');
+        }
         const profiles = [];
         
         // Process usernames
@@ -69,6 +74,10 @@ export const handleUserGrowthAnalytics: SocialDataHandler<UserGrowthAnalyticsArg
     try {
         const socialClient = getSocialDataClient();
         
+        if (!socialClient) {
+            return createMissingApiKeyResponse('User Growth Analytics');
+        }
+        
         // Get current profile
         const currentProfile = await socialClient.getUserProfile({ username, includeMetrics: true });
         
@@ -110,6 +119,10 @@ export const handleUserInfluenceMetrics: SocialDataHandler<UserInfluenceMetricsA
 ) => {
     try {
         const socialClient = getSocialDataClient();
+        
+        if (!socialClient) {
+            return createMissingApiKeyResponse('User Influence Metrics');
+        }
         
         // Get user profile and recent tweets
         const [profile, tweets] = await Promise.all([

@@ -13,7 +13,8 @@ import {
     createSocialDataResponse, 
     formatSocialDataError, 
     formatUserList,
-    formatAnalytics
+    formatAnalytics,
+    createMissingApiKeyResponse
 } from '../../utils/socialdata-response.js';
 
 export const handleFindMutualConnections: SocialDataHandler<CommonFollowersArgs> = async (
@@ -22,6 +23,10 @@ export const handleFindMutualConnections: SocialDataHandler<CommonFollowersArgs>
 ) => {
     try {
         const socialClient = getSocialDataClient();
+        
+        if (!socialClient) {
+            return createMissingApiKeyResponse('Mutual Connections Analysis');
+        }
         
         // Get interactions between the users by searching for mentions
         const mutualMentionsQuery = `(from:${user1} @${user2}) OR (from:${user2} @${user1})`;
@@ -89,6 +94,10 @@ export const handleAnalyzeFollowerDemographics: SocialDataHandler<FollowerAnalyt
 ) => {
     try {
         const socialClient = getSocialDataClient();
+        
+        if (!socialClient) {
+            return createMissingApiKeyResponse('Follower Demographics Analysis');
+        }
         
         // Get recent interactions to sample follower activity
         const mentionsQuery = `@${username}`;
@@ -170,6 +179,10 @@ export const handleMapInfluenceNetwork: SocialDataHandler<NetworkMappingArgs> = 
 ) => {
     try {
         const socialClient = getSocialDataClient();
+        
+        if (!socialClient) {
+            return createMissingApiKeyResponse('Influence Network Mapping');
+        }
         
         // Get users who frequently interact with the center user
         const mentionsQuery = `@${centerUser}`;

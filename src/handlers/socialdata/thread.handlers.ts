@@ -13,7 +13,8 @@ import {
     createSocialDataResponse, 
     formatSocialDataError, 
     formatTweetList,
-    formatAnalytics
+    formatAnalytics,
+    createMissingApiKeyResponse
 } from '../../utils/socialdata-response.js';
 
 export const handleGetFullThread: SocialDataHandler<FullThreadArgs> = async (
@@ -22,6 +23,10 @@ export const handleGetFullThread: SocialDataHandler<FullThreadArgs> = async (
 ) => {
     try {
         const socialClient = getSocialDataClient();
+        
+        if (!socialClient) {
+            return createMissingApiKeyResponse('Full Thread Analysis');
+        }
         
         // Search for the original tweet and related conversation
         const mainTweetQuery = `conversation_id:${tweetId}`;
@@ -82,6 +87,10 @@ export const handleGetConversationTree: SocialDataHandler<ConversationTreeArgs> 
 ) => {
     try {
         const socialClient = getSocialDataClient();
+        
+        if (!socialClient) {
+            return createMissingApiKeyResponse('Conversation Tree Analysis');
+        }
         
         // Get direct replies
         const repliesQuery = `to:* ${tweetId}`;
@@ -147,6 +156,10 @@ export const handleGetThreadMetrics: SocialDataHandler<ThreadMetricsArgs> = asyn
 ) => {
     try {
         const socialClient = getSocialDataClient();
+        
+        if (!socialClient) {
+            return createMissingApiKeyResponse('Thread Metrics Analysis');
+        }
         
         // Get thread data
         const threadQuery = `conversation_id:${tweetId}`;

@@ -13,6 +13,31 @@ export function createSocialDataResponse(
     };
 }
 
+export function createMissingApiKeyResponse(toolName: string): SocialDataHandlerResponse {
+    const message = `📋 **${toolName} requires SocialData API key**
+
+To use enhanced research tools, please:
+
+1. **Get an API key** from https://socialdata.tools
+2. **Add to your .env file:**
+   \`\`\`
+   SOCIALDATA_API_KEY=your_api_key_here
+   \`\`\`
+3. **Restart the MCP server**
+
+**Alternative:** Use the basic Twitter API tools instead:
+- \`searchTweets\` (limited by API tier)
+- \`getUserInfo\` for basic user data
+- \`getUserTimeline\` for user tweets
+
+The SocialData.tools integration provides enhanced research capabilities that bypass Twitter API tier restrictions.`;
+
+    return {
+        response: message,
+        tools: []
+    };
+}
+
 export function formatSocialDataError(error: Error, context: string): string {
     if (error.message.includes('401') || error.message.includes('403')) {
         return `SocialData API authentication failed: ${error.message}. Please check your SOCIALDATA_API_KEY in the .env file.`;

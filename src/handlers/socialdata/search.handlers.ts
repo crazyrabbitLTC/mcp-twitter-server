@@ -12,7 +12,8 @@ import {
 import { 
     createSocialDataResponse, 
     formatSocialDataError, 
-    formatTweetList 
+    formatTweetList,
+    createMissingApiKeyResponse
 } from '../../utils/socialdata-response.js';
 
 export const handleAdvancedTweetSearch: SocialDataHandler<AdvancedSearchArgs> = async (
@@ -21,6 +22,10 @@ export const handleAdvancedTweetSearch: SocialDataHandler<AdvancedSearchArgs> = 
 ) => {
     try {
         const socialClient = getSocialDataClient();
+        
+        if (!socialClient) {
+            return createMissingApiKeyResponse('Advanced Tweet Search');
+        }
         
         // Build advanced query with operators
         let searchQuery = query;
@@ -57,6 +62,10 @@ export const handleHistoricalTweetSearch: SocialDataHandler<HistoricalSearchArgs
     try {
         const socialClient = getSocialDataClient();
         
+        if (!socialClient) {
+            return createMissingApiKeyResponse('Historical Tweet Search');
+        }
+        
         const result = await socialClient.searchTweets({
             query,
             maxResults,
@@ -87,6 +96,10 @@ export const handleTrendingTopicsSearch: SocialDataHandler<TrendingTopicsArgs> =
 ) => {
     try {
         const socialClient = getSocialDataClient();
+        
+        if (!socialClient) {
+            return createMissingApiKeyResponse('Trending Topics Search');
+        }
         
         // For trending topics, we'll search for popular recent content
         const query = `filter:popular -filter:replies`;

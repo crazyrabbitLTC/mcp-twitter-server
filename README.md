@@ -6,8 +6,10 @@ A comprehensive Model Context Protocol server implementation for X (Twitter) API
 
 ## 🚀 Features
 
-- **22 X (Twitter) API Tools** - Complete tweet, user, engagement, and list management
-- **Professional Error Handling** - Clear upgrade guidance for API limitations
+- **53 Total Tools** - 33 Twitter API + 20 enhanced SocialData.tools research capabilities
+- **Advanced Analytics** - Thread analysis, network mapping, sentiment analysis, viral tracking
+- **Bypasses API Restrictions** - Enhanced research tools work without Pro tier requirements
+- **Professional Error Handling** - Clear upgrade guidance and graceful API key handling
 - **5 Workflow Prompts** - Pre-built automation templates
 - **6 Dynamic Resources** - Real-time API documentation and status
 - **Full MCP Compliance** - Tools, prompts, and resources support
@@ -32,7 +34,20 @@ A comprehensive Model Context Protocol server implementation for X (Twitter) API
 2. **Environment Setup**
    ```bash
    cp .env.example .env
-   # Edit .env with your X (Twitter) API credentials
+   # Edit .env with your credentials
+   ```
+
+   **Required Environment Variables:**
+   ```env
+   # Twitter API credentials (Required)
+   X_API_KEY=your_api_key_here
+   X_API_SECRET=your_api_secret_here  
+   X_ACCESS_TOKEN=your_access_token_here
+   X_ACCESS_TOKEN_SECRET=your_access_token_secret_here
+
+   # SocialData.tools API key (Optional - enables enhanced research tools)
+   SOCIALDATA_API_KEY=your_socialdata_api_key_here
+   SOCIALDATA_BASE_URL=https://api.socialdata.tools  # Optional, uses default if not set
    ```
 
 3. **Build and Run**
@@ -70,36 +85,92 @@ X_ACCESS_TOKEN_SECRET=your_access_token_secret_here
 | **Basic** | $200/month | 18/22 tools | searchTweets, getHashtagAnalytics |
 | **Pro** | $5,000/month | All 22 tools | None |
 
-## 🛠️ Available Tools (18/22 Working)
+## 🛠️ Available Tools (53 Total)
 
-### ✅ Tweet Operations (All Working)
+### 🐦 Twitter API Tools (33 tools)
+
+#### ✅ Tweet Operations (All Working)
 - `postTweet` - Post new tweets
 - `getTweetById` - Retrieve specific tweets  
 - `replyToTweet` - Reply to tweets
 - `deleteTweet` - Delete your tweets
 
-### ✅ Engagement (All Working)
+#### ✅ Engagement (All Working)
 - `likeTweet` / `unlikeTweet` - Like/unlike tweets
 - `retweet` / `undoRetweet` - Retweet/undo retweets
 - `getRetweets` - Get retweet users
 
-### ✅ User Management (Most Working)
+#### ✅ User Management (Most Working)
 - `getUserInfo` - Get user profiles ✅
 - `getUserTimeline` - Get user tweets ✅
 - `followUser` / `unfollowUser` - Follow/unfollow users ✅
 - `getFollowers` - Get followers ⚠️ (403 - requires special permissions)
 - `getFollowing` - Get following ⚠️ (403 - requires special permissions)
 
-### ✅ List Management (All Working)
+#### ✅ List Management (All Working)
 - `createList` - Create X (Twitter) lists
 - `getUserLists` - Get user's lists
 - `addUserToList` / `removeUserFromList` - Manage list members
 - `getListMembers` - Get list members
 
-### ⚠️ Search & Analytics (Limited)
+#### ⚠️ Search & Analytics (Limited)
 - `searchTweets` - Search tweets (requires Pro tier - $5,000/month)
 - `getHashtagAnalytics` - Hashtag analytics (requires Pro tier)
 - `getLikedTweets` - Get liked tweets (API access issue)
+
+### 🔍 SocialData.tools Enhanced Research (20 tools)
+
+*Note: These tools gracefully handle missing API keys with helpful setup instructions*
+
+#### 🔎 Advanced Search (6 tools)
+- `advancedTweetSearch` - Complex queries with operators, bypasses API tier restrictions
+- `historicalTweetSearch` - Access historical tweets beyond standard API limits
+- `trendingTopicsSearch` - Real-time trend analysis and popular content discovery
+- `bulkUserProfiles` - Multi-user profile analysis in single requests
+- `userGrowthAnalytics` - User growth pattern analysis over time
+- `userInfluenceMetrics` - Engagement scoring and influence calculations
+
+#### 🧵 Thread & Conversation Analysis (3 tools)
+- `getFullThread` - Reconstruct complete Twitter threads with engagement metrics
+- `getConversationTree` - Map conversation structure including replies and quotes
+- `getThreadMetrics` - Thread performance analysis and engagement distribution
+
+#### 🌐 Network Analysis (3 tools)
+- `findMutualConnections` - Discover mutual connections via interactions
+- `analyzeFollowerDemographics` - Follower patterns and demographic analysis
+- `mapInfluenceNetwork` - Influence mapping and connection strength analysis
+
+#### 📈 Advanced Analytics (3 tools)
+- `getHashtagTrends` - Hashtag performance tracking over time with trend analysis
+- `analyzeSentiment` - Sentiment analysis with keyword frequency tracking
+- `trackVirality` - Viral spread patterns and engagement velocity analysis
+
+#### 📱 Direct Messages & Moderation (5 tools)
+- Various DM and user moderation tools
+
+## 🔑 API Keys Setup
+
+### Twitter API (Required)
+Get these from [Twitter Developer Portal](https://developer.twitter.com/):
+
+```env
+X_API_KEY=your_api_key_here
+X_API_SECRET=your_api_secret_here  
+X_ACCESS_TOKEN=your_access_token_here
+X_ACCESS_TOKEN_SECRET=your_access_token_secret_here
+```
+
+### SocialData.tools API (Optional)
+Enables 20 enhanced research tools that bypass Twitter API limitations:
+
+1. **Sign up** at [SocialData.tools](https://socialdata.tools)
+2. **Get your API key** from the dashboard
+3. **Add to .env file:**
+   ```env
+   SOCIALDATA_API_KEY=your_socialdata_api_key_here
+   ```
+
+**Without SocialData API key:** Enhanced research tools will show helpful setup instructions instead of errors.
 
 ## 🎯 MCP Workflow Prompts
 
@@ -342,9 +413,12 @@ node --version
 
 ## 📊 Current Status
 
-- **22 Total Tools**: 18 working, 4 limited
-- **Professional Error Handling**: Clear upgrade guidance
+- **53 Total Tools**: 33 Twitter API + 20 SocialData.tools enhanced research
+- **Advanced Analytics**: Thread analysis, network mapping, sentiment analysis, viral tracking
+- **Graceful API Key Handling**: Enhanced tools show helpful setup instructions when API key missing
+- **Bypasses API Restrictions**: Research tools work without Twitter Pro tier requirements
+- **Professional Error Handling**: Clear upgrade guidance and user-friendly messages
 - **Full MCP Compliance**: Tools, prompts, resources
-- **Production Ready**: Enhanced reliability and UX
+- **Production Ready**: Enhanced reliability, comprehensive analytics, and excellent UX
 
-Built with ❤️ using the Model Context Protocol
+Built with ❤️ using the Model Context Protocol and SocialData.tools integration

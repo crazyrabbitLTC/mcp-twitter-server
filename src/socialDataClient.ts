@@ -5,15 +5,12 @@ import { SocialDataClient, SocialDataConfig } from './client/socialdata.js';
 
 let socialDataClient: SocialDataClient | null = null;
 
-export function createSocialDataClient(): SocialDataClient {
+export function createSocialDataClient(): SocialDataClient | null {
     if (!socialDataClient) {
         const apiKey = process.env.SOCIALDATA_API_KEY;
         
         if (!apiKey) {
-            throw new Error(
-                'SOCIALDATA_API_KEY environment variable is required. ' +
-                'Get your API key from https://socialdata.tools and add it to your .env file.'
-            );
+            return null;
         }
 
         const config: SocialDataConfig = {
@@ -27,7 +24,7 @@ export function createSocialDataClient(): SocialDataClient {
     return socialDataClient;
 }
 
-export function getSocialDataClient(): SocialDataClient {
+export function getSocialDataClient(): SocialDataClient | null {
     if (!socialDataClient) {
         return createSocialDataClient();
     }
