@@ -172,6 +172,48 @@ Enables 20 enhanced research tools that bypass Twitter API limitations:
 
 **Without SocialData API key:** Enhanced research tools will show helpful setup instructions instead of errors.
 
+## 🧪 Testing SocialData.tools Integration
+
+### Test Enhanced Research Tools
+```bash
+# Test advanced tweet search (bypasses Twitter API Pro tier requirement)
+source .env && echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "advancedTweetSearch", "arguments": {"query": "AI OR machine learning", "maxResults": 5}}}' | node dist/index.js
+
+# Test sentiment analysis
+source .env && echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "analyzeSentiment", "arguments": {"query": "ChatGPT", "sampleSize": 20}}}' | node dist/index.js
+
+# Test user influence metrics
+source .env && echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "userInfluenceMetrics", "arguments": {"username": "openai"}}}' | node dist/index.js
+
+# Test thread analysis
+source .env && echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "getFullThread", "arguments": {"tweetId": "1234567890123456789"}}}' | node dist/index.js
+```
+
+### Test Without API Key
+```bash
+# These will show helpful setup instructions instead of errors
+SOCIALDATA_API_KEY="" echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "advancedTweetSearch", "arguments": {"query": "test"}}}' | node dist/index.js
+```
+
+## 🆚 When to Use Which Tools
+
+### Twitter API vs SocialData.tools Comparison
+
+| Use Case | Twitter API Tool | SocialData.tools Alternative | Advantage |
+|----------|------------------|-------------------------------|-----------|
+| **Basic Search** | `searchTweets` ⚠️ (Pro tier $5k/month) | `advancedTweetSearch` ✅ | Bypasses API restrictions |
+| **User Analysis** | `getUserInfo` ✅ | `userInfluenceMetrics` ✅ | Enhanced analytics |
+| **Historical Data** | Limited by API tier | `historicalTweetSearch` ✅ | Access older tweets |
+| **Sentiment Analysis** | Not available | `analyzeSentiment` ✅ | Built-in sentiment scoring |
+| **Thread Analysis** | Manual reconstruction | `getFullThread` ✅ | Automated thread mapping |
+| **Network Mapping** | Not available | `mapInfluenceNetwork` ✅ | Connection analysis |
+| **Hashtag Trends** | `getHashtagAnalytics` ⚠️ (Pro tier) | `getHashtagTrends` ✅ | No tier restrictions |
+
+### Recommended Workflow
+1. **Start with Twitter API tools** for posting, engagement, and basic operations
+2. **Use SocialData.tools** for research, analytics, and advanced insights
+3. **Combine both** for comprehensive Twitter automation and analysis
+
 ## 🎯 MCP Workflow Prompts
 
 Our server includes 5 professional workflow templates:
