@@ -8,10 +8,10 @@ import {
     ListResourcesRequestSchema,
     ReadResourceRequestSchema
 } from '@modelcontextprotocol/sdk/types.js';
-import { TwitterClient } from './client/twitter.js';
 import { TOOLS } from './tools.js';
 import { PROMPTS, getPromptContent } from './prompts.js';
 import { RESOURCES, handleResource } from './resources.js';
+import { createTwitterClient } from './twitterClient.js';
 import { config } from 'dotenv';
 import {
     handlePostTweet,
@@ -98,13 +98,8 @@ const server = new Server({
     }
 });
 
-// Initialize Twitter client with all required credentials
-const client = new TwitterClient({
-    appKey: process.env.X_API_KEY || '',
-    appSecret: process.env.X_API_SECRET || '',
-    accessToken: process.env.X_ACCESS_TOKEN || '',
-    accessSecret: process.env.X_ACCESS_TOKEN_SECRET || '',
-});
+// Initialize Twitter client (returns null if credentials are missing)
+const client = createTwitterClient();
 
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
     tools: Object.entries(TOOLS).map(([name, tool]) => ({
@@ -146,7 +141,7 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => ({
 
 server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
     const { uri } = request.params;
-    return await handleResource(uri, client);
+    return await handleResource(uri, client || undefined);
 });
 
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
@@ -230,6 +225,26 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                     maxResults?: number; 
                     tweetFields?: string[] 
                 };
+                
+                if (!client) {
+                    response = { response: `📋 **Get User Timeline requires Twitter API credentials**
+
+To use Twitter tools, please:
+
+1. **Create a Twitter Developer Account** at https://developer.twitter.com
+2. **Create a new Twitter App** and generate API keys
+3. **Add to your .env file:**
+   \`\`\`
+   X_API_KEY=your_api_key_here
+   X_API_SECRET=your_api_secret_here
+   X_ACCESS_TOKEN=your_access_token_here
+   X_ACCESS_TOKEN_SECRET=your_access_token_secret_here
+   \`\`\`
+4. **Restart the MCP server**
+
+**Alternative:** Use the enhanced SocialData.tools research tools instead (if available)`, tools: [] };
+                    break;
+                }
                 
                 // Convert username to userId
                 const userResponse = await client.getUserByUsername(username);

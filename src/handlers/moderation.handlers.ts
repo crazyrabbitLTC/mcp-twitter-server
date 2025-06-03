@@ -10,14 +10,19 @@ import {
     GetMutedUsersArgs
 } from '../types/handlers.js';
 import { createResponse } from '../utils/response.js';
+import { createMissingTwitterApiKeyResponse, formatTwitterError } from '../utils/twitter-response.js';
 
 /**
  * Block a user account to prevent them from following you or viewing your tweets
  */
 export const handleBlockUser: TwitterHandler<BlockUserArgs> = async (
-    client: TwitterClient,
+    client: TwitterClient | null,
     { userId, username }: BlockUserArgs
 ): Promise<HandlerResponse> => {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('blockUser');
+    }
+    
     try {
         if (!userId && !username) {
             throw new Error('Either userId or username must be provided');
@@ -44,16 +49,7 @@ export const handleBlockUser: TwitterHandler<BlockUserArgs> = async (
         return createResponse(`Successfully blocked user ${username || targetUserId}. Response: ${JSON.stringify(result, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
-            if (error.message.includes('403')) {
-                throw new Error(`Failed to block user: Insufficient permissions. Blocking requires OAuth 2.0 authentication with block.write scope.`);
-            } else if (error.message.includes('404')) {
-                throw new Error(`Failed to block user: User ${username || userId} not found.`);
-            } else if (error.message.includes('422')) {
-                throw new Error(`Failed to block user: User ${username || userId} may already be blocked or cannot be blocked.`);
-            } else if (error.message.includes('429')) {
-                throw new Error(`Failed to block user: Rate limit exceeded. Block endpoints allow 50 requests per 15 minutes.`);
-            }
-            throw new Error(`Failed to block user: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'blocking user'));
         }
         throw error;
     }
@@ -63,9 +59,13 @@ export const handleBlockUser: TwitterHandler<BlockUserArgs> = async (
  * Unblock a previously blocked user account
  */
 export const handleUnblockUser: TwitterHandler<UnblockUserArgs> = async (
-    client: TwitterClient,
+    client: TwitterClient | null,
     { userId, username }: UnblockUserArgs
 ): Promise<HandlerResponse> => {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('unblockUser');
+    }
+    
     try {
         if (!userId && !username) {
             throw new Error('Either userId or username must be provided');
@@ -92,14 +92,7 @@ export const handleUnblockUser: TwitterHandler<UnblockUserArgs> = async (
         return createResponse(`Successfully unblocked user ${username || targetUserId}. Response: ${JSON.stringify(result, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
-            if (error.message.includes('403')) {
-                throw new Error(`Failed to unblock user: Insufficient permissions. Unblocking requires OAuth 2.0 authentication with block.write scope.`);
-            } else if (error.message.includes('404')) {
-                throw new Error(`Failed to unblock user: User ${username || userId} not found or was not previously blocked.`);
-            } else if (error.message.includes('429')) {
-                throw new Error(`Failed to unblock user: Rate limit exceeded. Block endpoints allow 50 requests per 15 minutes.`);
-            }
-            throw new Error(`Failed to unblock user: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'unblocking user'));
         }
         throw error;
     }
@@ -109,9 +102,13 @@ export const handleUnblockUser: TwitterHandler<UnblockUserArgs> = async (
  * Retrieve a paginated list of blocked users
  */
 export const handleGetBlockedUsers: TwitterHandler<GetBlockedUsersArgs> = async (
-    client: TwitterClient,
+    client: TwitterClient | null,
     { maxResults = 100, paginationToken, userFields }: GetBlockedUsersArgs
 ): Promise<HandlerResponse> => {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('getBlockedUsers');
+    }
+    
     try {
         // Get authenticated user's ID
         const me = await client.v2.me();
@@ -150,12 +147,7 @@ export const handleGetBlockedUsers: TwitterHandler<GetBlockedUsersArgs> = async 
         return createResponse(`Retrieved ${userData.length} blocked users: ${JSON.stringify(responseData, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
-            if (error.message.includes('403')) {
-                throw new Error(`Failed to get blocked users: Insufficient permissions. This endpoint requires OAuth 2.0 authentication with block.read scope.`);
-            } else if (error.message.includes('429')) {
-                throw new Error(`Failed to get blocked users: Rate limit exceeded. Block endpoints allow 50 requests per 15 minutes.`);
-            }
-            throw new Error(`Failed to get blocked users: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'getting blocked users'));
         }
         throw error;
     }
@@ -165,9 +157,13 @@ export const handleGetBlockedUsers: TwitterHandler<GetBlockedUsersArgs> = async 
  * Mute a user account to stop seeing their tweets in your timeline
  */
 export const handleMuteUser: TwitterHandler<MuteUserArgs> = async (
-    client: TwitterClient,
+    client: TwitterClient | null,
     { userId, username }: MuteUserArgs
 ): Promise<HandlerResponse> => {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('muteUser');
+    }
+    
     try {
         if (!userId && !username) {
             throw new Error('Either userId or username must be provided');
@@ -194,16 +190,7 @@ export const handleMuteUser: TwitterHandler<MuteUserArgs> = async (
         return createResponse(`Successfully muted user ${username || targetUserId}. Response: ${JSON.stringify(result, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
-            if (error.message.includes('403')) {
-                throw new Error(`Failed to mute user: Insufficient permissions. Muting requires OAuth 2.0 authentication with mute.write scope.`);
-            } else if (error.message.includes('404')) {
-                throw new Error(`Failed to mute user: User ${username || userId} not found.`);
-            } else if (error.message.includes('422')) {
-                throw new Error(`Failed to mute user: User ${username || userId} may already be muted or cannot be muted.`);
-            } else if (error.message.includes('429')) {
-                throw new Error(`Failed to mute user: Rate limit exceeded. Mute endpoints allow 50 requests per 15 minutes.`);
-            }
-            throw new Error(`Failed to mute user: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'muting user'));
         }
         throw error;
     }
@@ -213,9 +200,13 @@ export const handleMuteUser: TwitterHandler<MuteUserArgs> = async (
  * Unmute a previously muted user account
  */
 export const handleUnmuteUser: TwitterHandler<UnmuteUserArgs> = async (
-    client: TwitterClient,
+    client: TwitterClient | null,
     { userId, username }: UnmuteUserArgs
 ): Promise<HandlerResponse> => {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('unmuteUser');
+    }
+    
     try {
         if (!userId && !username) {
             throw new Error('Either userId or username must be provided');
@@ -242,14 +233,7 @@ export const handleUnmuteUser: TwitterHandler<UnmuteUserArgs> = async (
         return createResponse(`Successfully unmuted user ${username || targetUserId}. Response: ${JSON.stringify(result, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
-            if (error.message.includes('403')) {
-                throw new Error(`Failed to unmute user: Insufficient permissions. Unmuting requires OAuth 2.0 authentication with mute.write scope.`);
-            } else if (error.message.includes('404')) {
-                throw new Error(`Failed to unmute user: User ${username || userId} not found or was not previously muted.`);
-            } else if (error.message.includes('429')) {
-                throw new Error(`Failed to unmute user: Rate limit exceeded. Mute endpoints allow 50 requests per 15 minutes.`);
-            }
-            throw new Error(`Failed to unmute user: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'unmuting user'));
         }
         throw error;
     }
@@ -259,9 +243,13 @@ export const handleUnmuteUser: TwitterHandler<UnmuteUserArgs> = async (
  * Retrieve a paginated list of muted users
  */
 export const handleGetMutedUsers: TwitterHandler<GetMutedUsersArgs> = async (
-    client: TwitterClient,
+    client: TwitterClient | null,
     { maxResults = 100, paginationToken, userFields }: GetMutedUsersArgs
 ): Promise<HandlerResponse> => {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('getMutedUsers');
+    }
+    
     try {
         // Get authenticated user's ID
         const me = await client.v2.me();
@@ -300,12 +288,7 @@ export const handleGetMutedUsers: TwitterHandler<GetMutedUsersArgs> = async (
         return createResponse(`Retrieved ${userData.length} muted users: ${JSON.stringify(responseData, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
-            if (error.message.includes('403')) {
-                throw new Error(`Failed to get muted users: Insufficient permissions. This endpoint requires OAuth 2.0 authentication with mute.read scope.`);
-            } else if (error.message.includes('429')) {
-                throw new Error(`Failed to get muted users: Rate limit exceeded. Mute endpoints allow 50 requests per 15 minutes.`);
-            }
-            throw new Error(`Failed to get muted users: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'getting muted users'));
         }
         throw error;
     }

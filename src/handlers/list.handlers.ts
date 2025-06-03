@@ -1,6 +1,7 @@
 import { TwitterClient } from '../client/twitter.js';
 import { HandlerResponse } from '../types/handlers.js';
 import { createResponse } from '../utils/response.js';
+import { createMissingTwitterApiKeyResponse, formatTwitterError } from '../utils/twitter-response.js';
 import { ListV2, UserV2, ApiResponseError } from 'twitter-api-v2';
 
 export interface GetUserListsArgs {
@@ -33,9 +34,12 @@ export interface GetListMembersArgs {
 }
 
 export async function handleGetUserLists(
-    client: TwitterClient,
+    client: TwitterClient | null,
     args: GetUserListsArgs
 ): Promise<HandlerResponse> {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('getUserLists');
+    }
     try {
         const user = await client.getUserByUsername(args.username);
         if (!user.data) {
@@ -85,7 +89,7 @@ export async function handleGetUserLists(
         return createResponse(responseText);
     } catch (error) {
         if (error instanceof Error) {
-            throw new Error(`Failed to get user lists: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'getting user lists'));
         }
         throw new Error('Failed to get user lists: Unknown error occurred');
     }
@@ -105,9 +109,12 @@ function formatListInfo(list: ListV2): string {
 }
 
 export async function handleCreateList(
-    client: TwitterClient,
+    client: TwitterClient | null,
     args: CreateListArgs
 ): Promise<HandlerResponse> {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('createList');
+    }
     try {
         const list = await client.createList(args.name, args.description, args.isPrivate);
         if (!list.data) {
@@ -116,16 +123,19 @@ export async function handleCreateList(
         return createResponse(`Successfully created list: ${list.data.name}`);
     } catch (error) {
         if (error instanceof Error) {
-            throw new Error(`Failed to create list: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'creating list'));
         }
         throw new Error('Failed to create list: Unknown error occurred');
     }
 }
 
 export async function handleAddUserToList(
-    client: TwitterClient,
+    client: TwitterClient | null,
     args: AddUserToListArgs
 ): Promise<HandlerResponse> {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('addUserToList');
+    }
     try {
         // First, verify the user exists and get their username for the response message
         const user = await client.getUserById(args.userId);
@@ -161,31 +171,37 @@ export async function handleAddUserToList(
             throw new Error(`Twitter API Error: ${error.message}`);
         }
         if (error instanceof Error) {
-            throw new Error(`Failed to add user to list: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'adding user to list'));
         }
         throw new Error('Failed to add user to list: Unknown error occurred');
     }
 }
 
 export async function handleRemoveUserFromList(
-    client: TwitterClient,
+    client: TwitterClient | null,
     args: RemoveUserFromListArgs
 ): Promise<HandlerResponse> {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('removeUserFromList');
+    }
     try {
         await client.removeListMember(args.listId, args.userId);
         return createResponse(`Successfully removed user from list ${args.listId}`);
     } catch (error) {
         if (error instanceof Error) {
-            throw new Error(`Failed to remove user from list: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'removing user from list'));
         }
         throw new Error('Failed to remove user from list: Unknown error occurred');
     }
 }
 
 export async function handleGetListMembers(
-    client: TwitterClient,
+    client: TwitterClient | null,
     args: GetListMembersArgs
 ): Promise<HandlerResponse> {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('getListMembers');
+    }
     try {
         const options = {
             max_results: args.maxResults,
@@ -213,7 +229,7 @@ export async function handleGetListMembers(
         return createResponse(responseText);
     } catch (error) {
         if (error instanceof Error) {
-            throw new Error(`Failed to get list members: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'getting list members'));
         }
         throw new Error('Failed to get list members: Unknown error occurred');
     }

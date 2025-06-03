@@ -149,4 +149,4 @@ export interface GetAuthenticatedUserArgs {
     userFields?: TTweetv2UserField[];
 }
 
-export type TwitterHandler<T> = (client: TwitterClient, args: T) => Promise<HandlerResponse>; 
+export type TwitterHandler<T> = (client: TwitterClient | null, args: T) => Promise<HandlerResponse>; 

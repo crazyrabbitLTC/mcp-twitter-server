@@ -10,14 +10,18 @@ import {
     CreateMediaMessageArgs
 } from '../types/handlers.js';
 import { createResponse } from '../utils/response.js';
+import { createMissingTwitterApiKeyResponse, formatTwitterError } from '../utils/twitter-response.js';
 
 /**
  * Send a direct message to a specified user
  */
 export const handleSendDirectMessage: TwitterHandler<SendDirectMessageArgs> = async (
-    client: TwitterClient,
+    client: TwitterClient | null,
     { recipientId, text, mediaId }: SendDirectMessageArgs
 ): Promise<HandlerResponse> => {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('sendDirectMessage');
+    }
     try {
         const dmParams: any = {
             recipient_id: recipientId,
@@ -34,14 +38,10 @@ export const handleSendDirectMessage: TwitterHandler<SendDirectMessageArgs> = as
         return createResponse(`Direct message sent successfully to user ${recipientId}. Response: ${JSON.stringify(result, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
-            if (error.message.includes('403')) {
-                throw new Error(`Failed to send direct message: Insufficient permissions. Direct messages require proper OAuth 1.0a authentication and may require elevated access. Ensure you have DM permissions and the recipient allows messages from your account.`);
-            } else if (error.message.includes('404')) {
+            if (error.message.includes('404')) {
                 throw new Error(`Failed to send direct message: User ${recipientId} not found or cannot receive messages.`);
-            } else if (error.message.includes('429')) {
-                throw new Error(`Failed to send direct message: Rate limit exceeded. DM endpoint allows 300 requests per 15 minutes per user.`);
             }
-            throw new Error(`Failed to send direct message: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'sending direct message'));
         }
         throw error;
     }
@@ -51,9 +51,12 @@ export const handleSendDirectMessage: TwitterHandler<SendDirectMessageArgs> = as
  * Retrieve direct message conversations
  */
 export const handleGetDirectMessages: TwitterHandler<GetDirectMessagesArgs> = async (
-    client: TwitterClient,
+    client: TwitterClient | null,
     { maxResults = 100, paginationToken, dmEventFields }: GetDirectMessagesArgs
 ): Promise<HandlerResponse> => {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('getDirectMessages');
+    }
     try {
         const options: any = {
             max_results: Math.min(maxResults, 100) // API limit is 100
@@ -85,12 +88,7 @@ export const handleGetDirectMessages: TwitterHandler<GetDirectMessagesArgs> = as
         return createResponse(`Retrieved ${conversations.data.length} direct message events: ${JSON.stringify(responseData, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
-            if (error.message.includes('403')) {
-                throw new Error(`Failed to get direct messages: Insufficient permissions. This endpoint requires OAuth 2.0 authentication with proper DM scopes.`);
-            } else if (error.message.includes('429')) {
-                throw new Error(`Failed to get direct messages: Rate limit exceeded. DM endpoints have specific rate limits.`);
-            }
-            throw new Error(`Failed to get direct messages: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'getting direct messages'));
         }
         throw error;
     }
@@ -100,9 +98,12 @@ export const handleGetDirectMessages: TwitterHandler<GetDirectMessagesArgs> = as
  * Get specific direct message events
  */
 export const handleGetDirectMessageEvents: TwitterHandler<GetDirectMessageEventsArgs> = async (
-    client: TwitterClient,
+    client: TwitterClient | null,
     { maxResults = 100, paginationToken, dmEventFields, expansions, userFields }: GetDirectMessageEventsArgs
 ): Promise<HandlerResponse> => {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('getDirectMessageEvents');
+    }
     try {
         const options: any = {
             max_results: Math.min(maxResults, 100)
@@ -141,12 +142,7 @@ export const handleGetDirectMessageEvents: TwitterHandler<GetDirectMessageEvents
         return createResponse(`Retrieved ${events.data.length} direct message events: ${JSON.stringify(responseData, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
-            if (error.message.includes('403')) {
-                throw new Error(`Failed to get direct message events: Insufficient permissions. This endpoint requires OAuth 2.0 authentication with proper DM scopes.`);
-            } else if (error.message.includes('429')) {
-                throw new Error(`Failed to get direct message events: Rate limit exceeded.`);
-            }
-            throw new Error(`Failed to get direct message events: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'getting direct message events'));
         }
         throw error;
     }
@@ -156,9 +152,12 @@ export const handleGetDirectMessageEvents: TwitterHandler<GetDirectMessageEvents
  * Get full conversation history for a specific conversation
  */
 export const handleGetConversation: TwitterHandler<GetConversationArgs> = async (
-    client: TwitterClient,
+    client: TwitterClient | null,
     { conversationId, maxResults = 100, paginationToken, dmEventFields }: GetConversationArgs
 ): Promise<HandlerResponse> => {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('getConversation');
+    }
     try {
         const options: any = {
             max_results: Math.min(maxResults, 100)
@@ -200,14 +199,10 @@ export const handleGetConversation: TwitterHandler<GetConversationArgs> = async 
         return createResponse(`Retrieved ${responseData.messages.length} messages from conversation ${conversationId}: ${JSON.stringify(responseData, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
-            if (error.message.includes('403')) {
-                throw new Error(`Failed to get conversation: Insufficient permissions or conversation not accessible.`);
-            } else if (error.message.includes('404')) {
+            if (error.message.includes('404')) {
                 throw new Error(`Failed to get conversation: Conversation ${conversationId} not found.`);
-            } else if (error.message.includes('429')) {
-                throw new Error(`Failed to get conversation: Rate limit exceeded.`);
             }
-            throw new Error(`Failed to get conversation: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'getting conversation'));
         }
         throw error;
     }
@@ -217,9 +212,12 @@ export const handleGetConversation: TwitterHandler<GetConversationArgs> = async 
  * Mark direct messages as read
  */
 export const handleMarkAsRead: TwitterHandler<MarkAsReadArgs> = async (
-    client: TwitterClient,
+    client: TwitterClient | null,
     { messageId, conversationId }: MarkAsReadArgs
 ): Promise<HandlerResponse> => {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('markAsRead');
+    }
     try {
         // Note: The Twitter API v2 doesn't have a direct "mark as read" endpoint
         // This would typically be handled through the conversation update endpoint
@@ -239,12 +237,10 @@ export const handleMarkAsRead: TwitterHandler<MarkAsReadArgs> = async (
         return createResponse(`Message ${messageId} marked as read. Note: This functionality may require special API access or may not be available in the public Twitter API v2.`);
     } catch (error) {
         if (error instanceof Error) {
-            if (error.message.includes('403')) {
-                throw new Error(`Failed to mark message as read: Insufficient permissions. This functionality may require special API access.`);
-            } else if (error.message.includes('404')) {
+            if (error.message.includes('404')) {
                 throw new Error(`Failed to mark message as read: Message ${messageId} not found.`);
             }
-            throw new Error(`Failed to mark message as read: ${error.message}. Note: This functionality may not be available in the public Twitter API v2.`);
+            throw new Error(`${formatTwitterError(error, 'marking message as read')}. Note: This functionality may not be available in the public Twitter API v2.`);
         }
         throw error;
     }
@@ -254,9 +250,12 @@ export const handleMarkAsRead: TwitterHandler<MarkAsReadArgs> = async (
  * Send a direct message with media attachments
  */
 export const handleCreateMediaMessage: TwitterHandler<CreateMediaMessageArgs> = async (
-    client: TwitterClient,
+    client: TwitterClient | null,
     { recipientId, text, mediaId, altText }: CreateMediaMessageArgs
 ): Promise<HandlerResponse> => {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('createMediaMessage');
+    }
     try {
         // Using v1 API for sending DMs with media
         const dmParams: any = {
@@ -270,18 +269,14 @@ export const handleCreateMediaMessage: TwitterHandler<CreateMediaMessageArgs> = 
         return createResponse(`Direct message with media sent successfully to user ${recipientId}. Response: ${JSON.stringify(result, null, 2)}`);
     } catch (error) {
         if (error instanceof Error) {
-            if (error.message.includes('403')) {
-                throw new Error(`Failed to send media message: Insufficient permissions. Ensure you have DM permissions and media upload access.`);
-            } else if (error.message.includes('404')) {
+            if (error.message.includes('404')) {
                 throw new Error(`Failed to send media message: User ${recipientId} not found or media ${mediaId} not found.`);
             } else if (error.message.includes('413')) {
                 throw new Error(`Failed to send media message: Media file too large. Check Twitter's media size limits.`);
             } else if (error.message.includes('415')) {
                 throw new Error(`Failed to send media message: Unsupported media type. Check Twitter's supported media formats.`);
-            } else if (error.message.includes('429')) {
-                throw new Error(`Failed to send media message: Rate limit exceeded.`);
             }
-            throw new Error(`Failed to send media message: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'sending media message'));
         }
         throw error;
     }
