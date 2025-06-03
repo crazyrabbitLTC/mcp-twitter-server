@@ -1,6 +1,7 @@
-import { TwitterClient } from '../twitterClient.js';
+import { TwitterClient } from '../client/twitter.js';
 import { HandlerResponse, TwitterHandler } from '../types/handlers.js';
 import { createResponse } from '../utils/response.js';
+import { createMissingTwitterApiKeyResponse, formatTwitterError } from '../utils/twitter-response.js';
 import { TweetV2, TwitterApiReadOnly, UserV2, TweetSearchRecentV2Paginator } from 'twitter-api-v2';
 
 interface SearchTweetsArgs {
@@ -20,9 +21,12 @@ interface TweetWithAuthor extends TweetV2 {
 }
 
 export const handleSearchTweets: TwitterHandler<SearchTweetsArgs> = async (
-    client: TwitterClient,
+    client: TwitterClient | null,
     { query, maxResults = 10, tweetFields }: SearchTweetsArgs
 ): Promise<HandlerResponse> => {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('searchTweets');
+    }
     try {
         const searchResult = await client.v2.search(query, {
             max_results: maxResults,
@@ -38,7 +42,7 @@ export const handleSearchTweets: TwitterHandler<SearchTweetsArgs> = async (
 
         const formattedTweets = tweets.map((tweet: TweetV2): TweetWithAuthor => ({
             ...tweet,
-            author: searchResult.includes?.users?.find(u => u.id === tweet.author_id)
+            author: searchResult.includes?.users?.find((u: UserV2) => u.id === tweet.author_id)
         }));
 
         return createResponse(`Search results: ${JSON.stringify(formattedTweets, null, 2)}`);
@@ -47,16 +51,19 @@ export const handleSearchTweets: TwitterHandler<SearchTweetsArgs> = async (
             if (error.message.includes('400') && error.message.includes('Invalid Request')) {
                 throw new Error(`Search functionality requires Pro tier access ($5,000/month) or higher. Current Basic tier ($200/month) does not include recent search API access. Consider upgrading at https://developer.x.com/en/portal/products/pro or use alternative data sources.`);
             }
-            throw new Error(`Failed to search tweets: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'searching tweets'));
         }
         throw error;
     }
 };
 
 export const handleHashtagAnalytics: TwitterHandler<HashtagAnalyticsArgs> = async (
-    client: TwitterClient,
+    client: TwitterClient | null,
     { hashtag, startTime, endTime }: HashtagAnalyticsArgs
 ): Promise<HandlerResponse> => {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('hashtagAnalytics');
+    }
     try {
         const query = `#${hashtag.replace(/^#/, '')}`;
         const searchResult = await client.v2.search(query, {
@@ -87,7 +94,7 @@ export const handleHashtagAnalytics: TwitterHandler<HashtagAnalyticsArgs> = asyn
             if (error.message.includes('400') && error.message.includes('Invalid Request')) {
                 throw new Error(`Hashtag analytics requires Pro tier access ($5,000/month) or higher for search functionality. Current Basic tier ($200/month) does not include recent search API access. Consider upgrading at https://developer.x.com/en/portal/products/pro or use alternative analytics sources.`);
             }
-            throw new Error(`Failed to get hashtag analytics: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'getting hashtag analytics'));
         }
         throw error;
     }

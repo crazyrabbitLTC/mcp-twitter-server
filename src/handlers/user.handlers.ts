@@ -1,4 +1,4 @@
-import { TwitterClient } from '../twitterClient.js';
+import { TwitterClient } from '../client/twitter.js';
 import { UserV2, TTweetv2UserField } from 'twitter-api-v2';
 import { 
     HandlerResponse, 
@@ -7,6 +7,7 @@ import {
     GetAuthenticatedUserArgs
 } from '../types/handlers.js';
 import { createResponse } from '../utils/response.js';
+import { createMissingTwitterApiKeyResponse, formatTwitterError } from '../utils/twitter-response.js';
 
 interface GetUserInfoArgs extends UserHandlerArgs {
     fields?: TTweetv2UserField[];
@@ -28,29 +29,44 @@ interface GetFollowingArgs extends UserHandlerArgs {
 }
 
 export const handleGetUserInfo: TwitterHandler<GetUserInfoArgs> = async (
-    client: TwitterClient,
+    client: TwitterClient | null,
     { username, fields }: GetUserInfoArgs
 ): Promise<HandlerResponse> => {
-    const user = await client.v2.userByUsername(
-        username,
-        { 
-            'user.fields': fields || ['description', 'public_metrics', 'profile_image_url', 'verified'] as TTweetv2UserField[]
-        }
-    );
-    
-    if (!user.data) {
-        throw new Error(`User not found: ${username}`);
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('getUserInfo');
     }
 
-    return createResponse(`User info: ${JSON.stringify(user.data, null, 2)}`);
+    try {
+        const user = await client.v2.userByUsername(
+            username,
+            { 
+                'user.fields': fields || ['description', 'public_metrics', 'profile_image_url', 'verified'] as TTweetv2UserField[]
+            }
+        );
+        
+        if (!user.data) {
+            throw new Error(`User not found: ${username}`);
+        }
+
+        return createResponse(`User info: ${JSON.stringify(user.data, null, 2)}`);
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(formatTwitterError(error, 'getting user info'));
+        }
+        throw error;
+    }
 };
 
 export const handleFollowUser: TwitterHandler<UserHandlerArgs> = async (
-    client: TwitterClient,
+    client: TwitterClient | null,
     { username }: UserHandlerArgs
 ): Promise<HandlerResponse> => {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('followUser');
+    }
+
     try {
-        const userId = await client.v2.me().then(response => response.data.id);
+        const userId = await client.v2.me().then((response: any) => response.data.id);
         const targetUser = await client.v2.userByUsername(username);
         
         if (!targetUser.data) {
@@ -61,18 +77,22 @@ export const handleFollowUser: TwitterHandler<UserHandlerArgs> = async (
         return createResponse(`Successfully followed user: ${username}`);
     } catch (error) {
         if (error instanceof Error) {
-            throw new Error(`Failed to follow user: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'following user'));
         }
         throw error;
     }
 };
 
 export const handleUnfollowUser: TwitterHandler<UserHandlerArgs> = async (
-    client: TwitterClient,
+    client: TwitterClient | null,
     { username }: UserHandlerArgs
 ): Promise<HandlerResponse> => {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('unfollowUser');
+    }
+
     try {
-        const userId = await client.v2.me().then(response => response.data.id);
+        const userId = await client.v2.me().then((response: any) => response.data.id);
         const targetUser = await client.v2.userByUsername(username);
         
         if (!targetUser.data) {
@@ -83,16 +103,20 @@ export const handleUnfollowUser: TwitterHandler<UserHandlerArgs> = async (
         return createResponse(`Successfully unfollowed user: ${username}`);
     } catch (error) {
         if (error instanceof Error) {
-            throw new Error(`Failed to unfollow user: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'unfollowing user'));
         }
         throw error;
     }
 };
 
 export const handleGetFollowers: TwitterHandler<GetFollowersArgs> = async (
-    client: TwitterClient,
+    client: TwitterClient | null,
     { username, maxResults, userFields }: GetFollowersArgs
 ): Promise<HandlerResponse> => {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('getFollowers');
+    }
+
     try {
         const user = await client.v2.userByUsername(username);
         if (!user.data) {
@@ -119,16 +143,20 @@ export const handleGetFollowers: TwitterHandler<GetFollowersArgs> = async (
             if (error.message.includes('403')) {
                 throw new Error(`Get followers functionality requires elevated permissions. This endpoint may require Pro tier access ($5,000/month) or special permission approval from X. Current Basic tier ($200/month) has limited access to follower data for privacy reasons. Contact X Developer Support or consider upgrading at https://developer.x.com/en/portal/products/pro`);
             }
-            throw new Error(`Failed to get followers: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'getting followers'));
         }
         throw error;
     }
 };
 
 export const handleGetFollowing: TwitterHandler<GetFollowingArgs> = async (
-    client: TwitterClient,
+    client: TwitterClient | null,
     { username, maxResults, userFields }: GetFollowingArgs
 ): Promise<HandlerResponse> => {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('getFollowing');
+    }
+
     try {
         const user = await client.v2.userByUsername(username);
         if (!user.data) {
@@ -155,7 +183,7 @@ export const handleGetFollowing: TwitterHandler<GetFollowingArgs> = async (
             if (error.message.includes('403')) {
                 throw new Error(`Get following functionality requires elevated permissions. This endpoint may require Pro tier access ($5,000/month) or special permission approval from X. Current Basic tier ($200/month) has limited access to following data for privacy reasons. Contact X Developer Support or consider upgrading at https://developer.x.com/en/portal/products/pro`);
             }
-            throw new Error(`Failed to get following: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'getting following'));
         }
         throw error;
     }
@@ -165,9 +193,13 @@ export const handleGetFollowing: TwitterHandler<GetFollowingArgs> = async (
  * Get the authenticated user's own profile information
  */
 export const handleGetAuthenticatedUser: TwitterHandler<GetAuthenticatedUserArgs> = async (
-    client: TwitterClient,
+    client: TwitterClient | null,
     { userFields }: GetAuthenticatedUserArgs
 ): Promise<HandlerResponse> => {
+    if (!client) {
+        return createMissingTwitterApiKeyResponse('getAuthenticatedUser');
+    }
+
     try {
         const me = await client.v2.me({
             'user.fields': (userFields as TTweetv2UserField[]) || ['id', 'username', 'name', 'description', 'public_metrics', 'verified', 'profile_image_url', 'created_at'] as TTweetv2UserField[]
@@ -186,7 +218,7 @@ export const handleGetAuthenticatedUser: TwitterHandler<GetAuthenticatedUserArgs
             if (error.message.includes('429')) {
                 throw new Error(`Rate limit exceeded. Please wait before making another request.`);
             }
-            throw new Error(`Failed to get authenticated user: ${error.message}`);
+            throw new Error(formatTwitterError(error, 'getting authenticated user'));
         }
         throw error;
     }
